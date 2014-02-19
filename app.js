@@ -9,7 +9,7 @@
         events: {
             'app.activated': 'showEntryForm',
             'click .submitRedaction': 'confirmString',
-            'click .toggle_modal': 'displayModal',
+            'click .attachRedact': 'attachmentModal',
             'click .save_button': 'doRedact',
             'getTicketComments.done': 'matchResults',
             'putRedactionString.done': 'notifyRedaction',
@@ -64,6 +64,14 @@
                 backdrop: true,
                 keyboard: false,
                 body: this.$('.modal-body div.stringPresenter').text(searchString)
+            });
+        },
+
+        //Will need to add logic to populate modal with attachments on this ticket...
+        attachmentModal: function() {
+            this.$('.attachment_modal').modal({
+                backdrop: true,
+                keyboard: false
             });
         },
 
