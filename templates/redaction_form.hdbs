@@ -1,0 +1,36 @@
+<section data-main>
+<div class="redactForm">
+  <h4 class="redaction-type">Text Redaction</h4>
+<textarea type="text" id="redactionString" class="redactionString" name="redactionString"  placeholder="please paste in the string you wish to redact..." rows="4" cols="50" >
+</textarea>
+<button class='submitRedaction btn'>Redact This!</button>
+</div>
+<span class="breakline"></span>
+<div class="attachredact">
+  <h4 class="redaction-type">Attachment Redaction</h4>
+  <div class="allAttachmentsList">
+    <ul>
+    </ul>
+  </div>
+
+
+</div>
+
+<!--Modal for confirming redactions -->
+<div class="modal hide fade my_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 class="my_modal_label">Confirm Your Redaction</h3>
+  </div>
+  <div class="modal-body">
+    <p>Do you wish to redact the below string? <span class="tinyNote">(Note: This will remove each occurance of the below string)</span></p>
+    <div class="stringPresenter">{{body}}</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-primary save_button" aria-hidden="true">Yes, Get You Gone Infernal String!</button>
+  </div>
+</div>
+<!--END confirmation modal -->
+
+</section>

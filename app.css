@@ -1,0 +1,35 @@
+/***** Form Styles *****/
+button.submitRedaction {
+    margin: 20px 0 0 0;
+}
+
+label.redlabel {
+    margin: 0 0 10px 0;
+}
+
+textarea.redactionString {
+    min-height: 100px;
+}
+.modal{
+  width: 700px;
+}
+.tinyNote {
+    font-size: 90%;
+}
+
+span.breakline {
+    display: block;
+    width: 100%;
+    border-bottom: 1px dotted #666;
+    margin: 10px 0;
+}
+
+.redaction-type {
+    margin: 10px 0;
+}
+
+.allAttachmentsList {
+    width: 100%;
+    border: 1px solid black;
+    padding: 10px 0;
+}
