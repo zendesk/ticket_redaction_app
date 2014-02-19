@@ -8,8 +8,7 @@
 
         events: {
             'app.activated': 'showEntryForm',
-            //'app.activated': 'initTicketData', This will eventually replace showEntryForm and prepare our data ahead of time...
-            'click .submitRedaction': 'getRedactionString',
+            'click .submitRedaction': 'confirmString',
             'click .toggle_modal': 'displayModal',
             'click .save_button': 'doRedact',
             'getTicketComments.done': 'matchResults',
@@ -55,39 +54,28 @@
             }
         }, //end requests
 
-        initTicketData: function() {
-
-        },
-
         showEntryForm: function() {
-            var ticketId = this.ticket().id();
-            //this.ajax('getTicketComments', ticketId); will need to remove the .done event and store the resultant data for more efficient use later in the app
             this.switchTo('redaction_form');
         },
 
-        getRedactionString: function() {
+        confirmString: function() {
             var searchString = this.$('.redactionString')[0].value;
-            escapedString = searchString.replace(/[\n]/g, "\\n");
-            this.confirmString(escapedString);
-        },
-
-        confirmString: function(escapedString) {
-            this.$('.my_modal').modal({
+            this.$('.text_redact').modal({
                 backdrop: true,
                 keyboard: false,
-                body: this.$('.modal-body div.stringPresenter').text(escapedString)
+                body: this.$('.modal-body div.stringPresenter').text(searchString)
             });
-            return escapedString;
-
         },
 
         doRedact: function() {
-            this.$('.my_modal').modal('hide');
+            this.$('.text_redact').modal('hide');
             var ticketId = this.ticket().id();
             this.ajax('getTicketComments', ticketId);
         },
 
         matchResults: function(data) {
+            var searchString = this.$('.redactionString')[0].value;
+            var escapedString = searchString.replace(/[\n]/g, "\\n");
             var ticketComments = data.comments;
             var count = data.count;
             var commentID = [];

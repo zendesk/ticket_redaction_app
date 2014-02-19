@@ -8,16 +8,12 @@
 <span class="breakline"></span>
 <div class="attachredact">
   <h4 class="redaction-type">Attachment Redaction</h4>
-  <div class="allAttachmentsList">
-    <ul>
-    </ul>
-  </div>
-
-
+  <label for="attachRedact" class="form-label" >Do you want to redact an attachment?</label>
+  <button id="attachRedact" class="attachRedact btn" >Yes</button>
 </div>
 
 <!--Modal for confirming redactions -->
-<div class="modal hide fade my_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 class="my_modal_label">Confirm Your Redaction</h3>
