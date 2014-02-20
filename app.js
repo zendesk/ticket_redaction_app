@@ -1,7 +1,7 @@
 (function() {
 
     var REDACTION_URI = '/api/v2/tickets/%@/comments/%@/redact.json',
-    ATTACHMENT_REDACTION_URI = 'api/v2/tickets/%a/comments/%@/attachments/%@/redact.json',
+        ATTACHMENT_REDACTION_URI = 'api/v2/tickets/%a/comments/%@/attachments/%@/redact.json',
         TIXCOMMENTS_URI = '/api/v2/tickets/%@/comments.json';
 
     return {
@@ -75,16 +75,24 @@
 
         //Will need to add logic to populate modal with attachments on this ticket...
         attachmentModal: function(data) {
-            var asdf = data;
-            console.log(asdf);
-            var attachments = _.filter(asdf.comments, function(comment) {
-                return comment.attachments.length > 0;
-            });
+
+            var html, attachments = _.chain(data.comments)
+                    .filter(function(comment) {
+                        return comment.attachments.length > 0;
+                    })
+                    .map(function(comment) {
+                        return {
+                            commentID: comment.id,
+                            attachmentIDs: _.map(comment.attachments, function(attachment) {
+                                return attachment.id;
+                            })
+                        };
+                    })
+                    .value();
             console.log(attachments);
             this.$('.attachment_modal').modal({
                 backdrop: true,
-                keyboard: false,
-                attachment_body: this.$('.modal-body div.attachPresenter').text(asdf)
+                keyboard: false
             });
         },
 
