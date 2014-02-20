@@ -36,7 +36,7 @@
     <h3 class="my_modal_label">List of attachments</h3>
   </div>
   <div class="modal-body">
-
+    <div class="attachPresenter">{{attachment_body}}</div>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>

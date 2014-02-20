@@ -1,7 +1,7 @@
 (function() {
 
     var REDACTION_URI = '/api/v2/tickets/%@/comments/%@/redact.json',
-        ATTACHMENT_REDACTION_URI = 'api/v2/tickets/%a/comments/%@/attachments/%@/redact.json',
+    ATTACHMENT_REDACTION_URI = 'api/v2/tickets/%a/comments/%@/attachments/%@/redact.json',
         TIXCOMMENTS_URI = '/api/v2/tickets/%@/comments.json';
 
     return {
@@ -9,11 +9,12 @@
         events: {
             'app.activated': 'showEntryForm',
             'click .submitRedaction': 'confirmString',
-            'click .attachRedact': 'attachmentModal',
+            'click .attachRedact': 'getAttachmentArray',
             'click .save_button': 'doRedact',
             'getTicketComments.done': 'matchResults',
             'putRedactionString.done': 'notifyRedaction',
-            'putRedactionString.fail': 'notifyFail'
+            'putRedactionString.fail': 'notifyFail',
+            'getAttachmentData.done': 'attachmentModal'
         }, //end events
 
 
@@ -26,7 +27,7 @@
                     contentType: 'application/json'
                 };
             },
-            getCommentData: function(ticketId) {
+            getAttachmentData: function(ticketId) {
                 return {
                     url: helpers.fmt(TIXCOMMENTS_URI, ticketId),
                     dataType: 'JSON',
@@ -67,11 +68,23 @@
             });
         },
 
+        getAttachmentArray: function() {
+            var ticketId = this.ticket().id();
+            this.ajax('getAttachmentData', ticketId);
+        },
+
         //Will need to add logic to populate modal with attachments on this ticket...
-        attachmentModal: function() {
+        attachmentModal: function(data) {
+            var asdf = data;
+            console.log(asdf);
+            var attachments = _.filter(asdf.comments, function(comment) {
+                return comment.attachments.length > 0;
+            });
+            console.log(attachments);
             this.$('.attachment_modal').modal({
                 backdrop: true,
-                keyboard: false
+                keyboard: false,
+                attachment_body: this.$('.modal-body div.attachPresenter').text(asdf)
             });
         },
 
