@@ -11,10 +11,11 @@
             'click .submitRedaction': 'confirmString',
             'click .attachRedact': 'getAttachmentArray',
             'click .save_button': 'doRedact',
+            'click .AttachLeave': 'showEntryForm',
             'getTicketComments.done': 'matchResults',
             'putRedactionString.done': 'notifyRedaction',
             'putRedactionString.fail': 'notifyFail',
-            'getAttachmentData.done': 'attachmentModal'
+            'getAttachmentData.done': 'attachmentsTemplate'
         }, //end events
 
 
@@ -74,25 +75,33 @@
         },
 
         //Will need to add logic to populate modal with attachments on this ticket...
-        attachmentModal: function(data) {
+        attachmentsTemplate: function(data) {
 
-            var html, attachments = _.chain(data.comments)
-                    .filter(function(comment) {
-                        return comment.attachments.length > 0;
-                    })
-                    .map(function(comment) {
-                        return {
-                            commentID: comment.id,
-                            attachmentIDs: _.map(comment.attachments, function(attachment) {
-                                return attachment.id;
-                            })
-                        };
-                    })
-                    .value();
-            console.log(attachments);
-            this.$('.attachment_modal').modal({
-                backdrop: true,
-                keyboard: false
+
+            attachments = _.chain(data.comments)
+                .filter(function(comment) {
+                    return comment.attachments.length > 0;
+                })
+                .map(function(comment) {
+                    return {
+                        attachment_array: _.map(comment.attachments, function(attachment) {
+                            return {
+                                comment_id: comment.id,
+                                attachment_id: attachment.id,
+                                type: attachment.content_type,
+                                url: attachment.content_url,
+                                file: attachment.file_name
+                            }
+                        })
+                    };
+                })
+                .map(function(comment) {
+                    return comment.attachment_array;
+                })
+                .flatten(true)
+                .value();
+            this.switchTo('attachmentsForm', {
+                attachments: attachments
             });
         },
 

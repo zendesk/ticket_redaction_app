@@ -22,8 +22,37 @@ span.breakline {
     width: 100%;
     border-bottom: 1px dotted #666;
     margin: 10px 0;
+    clear: both;
 }
 
 .redaction-type {
     margin: 10px 0;
 }
+
+#attachLeave {
+    float: left;
+}
+
+#attachConfirm {
+    float: right;
+}
+
+.filename {
+    margin-left: 10px;
+}
+
+label#attachRedactLabel {
+float: left;
+font-size: 120%;
+margin-top: 5px;
+}
+
+#attachRedact {
+float: right;
+}
+
+#attachRedact:after {
+    clear:both;
+}
+
+
