@@ -22,7 +22,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary save_button" aria-hidden="true">Yes, Get You Gone Infernal String!</button>
+    <button class="btn btn-primary save_button" aria-hidden="true">Yes, Redact The Above Attachment(s)</button>
   </div>
 </div>
 <!--END text confirmation modal -->

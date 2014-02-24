@@ -12,6 +12,7 @@
             'click .attachRedact': 'getAttachmentArray',
             'click .save_button': 'doRedact',
             'click .AttachLeave': 'showEntryForm',
+            'click .AttachConfirm': 'confirmAttachment',
             'getTicketComments.done': 'matchResults',
             'putRedactionString.done': 'notifyRedaction',
             'putRedactionString.fail': 'notifyFail',
@@ -78,7 +79,7 @@
         attachmentsTemplate: function(data) {
 
 
-            attachments = _.chain(data.comments)
+            var attachments = _.chain(data.comments)
                 .filter(function(comment) {
                     return comment.attachments.length > 0;
                 })
@@ -129,6 +130,23 @@
             }
 
             this.executeRedaction(commentID, escapedString);
+        },
+
+        confirmAttachment: function(data) {
+            var selectedIds = this.$('ul#attachmentList li input').serializeArray();
+            var selectedAttachments = _.chain(selectedIds)
+                .map(function(attachment) {
+                    return {
+                        attachment_id: attachment.name
+                    }
+                })
+                .value();
+            var count = selectedIds.length;
+            var presentedHtml = '';
+            for (var x = 0; x < count; x++) {
+
+            }
+            console.log(selectedAttachments);
         },
 
         executeRedaction: function(commentID, escapedString) {
