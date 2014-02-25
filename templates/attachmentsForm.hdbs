@@ -1,0 +1,39 @@
+<section data-main>
+  <h4 class="redaction-type">Attachment Redaction</h4>  
+  <div class="attachForm">
+    <ul id="attachmentList">
+      {{#each attachments}}
+      <li>
+        <input class="attach_check" type="checkbox" name="{{this.key}}" /><span class="filename">{{this.file}}</span>
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.attachment_id}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.url}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.file}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.comment_id}}" />
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+    <span class="breakline"></span>
+    <button id="attachLeave" class="AttachLeave btn" >Go Back</button>
+    <button id="attachConfirm" class="AttachConfirm btn" >Confirm Redaction</button>
+
+
+<!--Modal for confirming text redactions -->
+<div class="modal hide fade attach_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 class="my_modal_label">Confirm Your Redaction</h3>
+  </div>
+  <div class="modal-body">
+    <p>Do you wish to redact the following attachments? <span class="tinyNote">(Note: This will replace each occurance of the below attachment with an empty text file)</span></p>
+    <div class="attachPresenter">
+
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-primary save_attach_redact" aria-hidden="true">Yes, Redact The Above Attachment(s)</button>
+  </div>
+</div>
+<!--END text confirmation modal -->
+</section>

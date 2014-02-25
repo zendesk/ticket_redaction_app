@@ -6,11 +6,9 @@
 <button class='submitRedaction btn'>Redact This!</button>
 </div>
 <span class="breakline"></span>
-<div class="attachredact">
-  <h4 class="redaction-type">Attachment Redaction</h4>
-  <label for="attachRedact" class="form-label" >Do you want to redact an attachment?</label>
-  <button id="attachRedact" class="attachRedact btn" >Yes</button>
-</div>
+<label id="attachRedactLabel" for="attachRedact" class="button-label" >Do you want to redact an attachment?</label>
+<button id="attachRedact" class="attachRedact btn" >Yes</button>
+
 
 <!--Modal for confirming text redactions -->
 <div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -24,25 +22,11 @@
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary save_button" aria-hidden="true">Yes, Get You Gone Infernal String!</button>
+    <button class="btn btn-primary save_string_redact" aria-hidden="true">Yes, Redact The Above Attachment(s)</button>
   </div>
 </div>
 <!--END text confirmation modal -->
 
-<!--Modal for confirming attachment redactions -->
-<div class="modal hide fade attachment_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 class="my_modal_label">List of attachments</h3>
-  </div>
-  <div class="modal-body">
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary save_button" aria-hidden="true">Redact selected attachments!</button>
-  </div>
-</div>
-<!--END attachment confirmation modal -->
 
 </section>
