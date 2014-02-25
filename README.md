@@ -1,8 +1,15 @@
+:warning: *Use of this software is subject to important terms and conditions as set forth in the License file* :warning:
+
 # Ticket Redaction App
 
 ## Description:
 
-An app which uses the beta /api/v2/{{ticket_id}}/comments/{{comment_id}}/redact.json endpoint. The user can copy/past a piece of text directly from a ticket into the app and it will confirm, then perform the redaction.
+An app which uses the below endpoints (beta):
+
+* /api/v2/{{ticket_id}}/comments/{{comment_id}}/redact.json
+* /api/v2/{{ticket_id}}/comments/{{comment_id}}/attachments/{{attachment_id}}/redact.json
+
+The app is designed to create a simple and usable interface for Zendesk administrators to easily redact strings of text or attachments from a ticket. The intended use is to redact sensitive data, such as ID numbers, credit cards, passwords, etc... A user can copy/past the chosen text directly from a ticket into the app and it will confirm, then perform the redaction. Attachments are redacted by selecting from a list the desired attachments, then confirming the redaction in a modal window.
 
 ## App location:
 
@@ -11,11 +18,11 @@ An app which uses the beta /api/v2/{{ticket_id}}/comments/{{comment_id}}/redact.
 ## Features:
 
 * Redacts a specific string from ticket comments
-* Redacts chosen attachments from ticket
+* Redacts the specific attachment(s) from a ticket
 
 ## Set-up/installation instructions:
 
-Simply install the app and add role restrictions as necessary.
+Install and activate the app, then open a ticket.
 
 ## Contribution:
 
@@ -23,6 +30,5 @@ Pull requests are welcome.
 
 ## Screenshot(s):
 
-Please use Skitch or CloudApp to upload a screenshot or a GIF. If GIFs are possible they are always better. See LICEcap.
-
-![](http://f.cl.ly/items/2L2d2M1G2X0U372J1n1j/Screen%20Shot%202014-01-08%20at%201.09.04%20PM.png)
+![](http://imgur.com/O9UOSGF)
+![](http://imgur.com/y2XlR81)
