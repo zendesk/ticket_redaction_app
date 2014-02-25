@@ -3,7 +3,13 @@
   <div class="attachForm">
     <ul id="attachmentList">
       {{#each attachments}}
-      <li><input class="attach_check" type="checkbox" name="{{this.attachment_id}}" /><span class="filename">{{this.file}}</span></li>
+      <li>
+        <input class="attach_check" type="checkbox" name="{{this.key}}" /><span class="filename">{{this.file}}</span>
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.attachment_id}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.url}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.file}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.comment_id}}" />
+      </li>
       {{/each}}
     </ul>
   </div>
@@ -20,11 +26,13 @@
   </div>
   <div class="modal-body">
     <p>Do you wish to redact the following attachments? <span class="tinyNote">(Note: This will replace each occurance of the below attachment with an empty text file)</span></p>
-    <div class="attachPresenter">{{body}}</div>
+    <div class="attachPresenter">
+
+    </div>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary save_button" aria-hidden="true">Yes, Redact The Above Attachment(s)</button>
+    <button class="btn btn-primary save_attach_redact" aria-hidden="true">Yes, Redact The Above Attachment(s)</button>
   </div>
 </div>
 <!--END text confirmation modal -->

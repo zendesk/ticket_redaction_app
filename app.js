@@ -1,29 +1,48 @@
 (function() {
 
-    var REDACTION_URI = '/api/v2/tickets/%@/comments/%@/redact.json',
-        ATTACHMENT_REDACTION_URI = 'api/v2/tickets/%a/comments/%@/attachments/%@/redact.json',
-        TIXCOMMENTS_URI = '/api/v2/tickets/%@/comments.json';
-
     return {
+        undermatches: function(attrs) {
+            return function(obj) {
+                if (obj === attrs) return true; //avoid comparing an object to itself.
+                for (var key in attrs) {
+                    if (attrs[key] !== obj[key])
+                        return false;
+                }
+                return true;
+            }
+        },
+
+        underwhere: function(obj, attrs) {
+            return _.filter(obj, this.undermatches(attrs));
+        },
+
+        resources: {
+            REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
+            ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
+            TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
+        },
 
         events: {
             'app.activated': 'showEntryForm',
             'click .submitRedaction': 'confirmString',
             'click .attachRedact': 'getAttachmentArray',
-            'click .save_button': 'doRedact',
+            'click .save_string_redact': 'doRedact',
             'click .AttachLeave': 'showEntryForm',
             'click .AttachConfirm': 'confirmAttachment',
+            'click .save_attach_redact': 'doAttachRedact',
             'getTicketComments.done': 'matchResults',
             'putRedactionString.done': 'notifyRedaction',
             'putRedactionString.fail': 'notifyFail',
-            'getAttachmentData.done': 'attachmentsTemplate'
+            'getAttachmentData.done': 'attachmentsTemplate',
+            'putRedactionAttachment.done': 'notifyRedaction',
+            'putRedactionAttachment.fail': 'notifyFail'
         }, //end events
 
 
         requests: {
             getTicketComments: function(ticketId) {
                 return {
-                    url: helpers.fmt(TIXCOMMENTS_URI, ticketId),
+                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticketId),
                     dataType: 'JSON',
                     type: 'GET',
                     contentType: 'application/json'
@@ -31,7 +50,7 @@
             },
             getAttachmentData: function(ticketId) {
                 return {
-                    url: helpers.fmt(TIXCOMMENTS_URI, ticketId),
+                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticketId),
                     dataType: 'JSON',
                     type: 'GET',
                     contentType: 'application/json'
@@ -39,7 +58,7 @@
             },
             putRedactionString: function(data, ticketId, c_id) {
                 return {
-                    url: helpers.fmt(REDACTION_URI, ticketId, c_id),
+                    url: helpers.fmt(this.resources.REDACTION_URI, ticketId, c_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
@@ -48,7 +67,7 @@
             },
             putRedactionAttachment: function(ticketId, c_id, attachment_id) {
                 return {
-                    url: helpers.fmt(ATTACHMENT_REDACTION_URI, ticketId, c_id, attachment_id),
+                    url: helpers.fmt(this.resources.ATTACHMENT_REDACTION_URI, ticketId, c_id, attachment_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
@@ -101,6 +120,10 @@
                 })
                 .flatten(true)
                 .value();
+            var count = attachments.length;
+            for (var x = 0; x < count; x++) {
+                attachments[x].key = x;
+            }
             this.switchTo('attachmentsForm', {
                 attachments: attachments
             });
@@ -124,40 +147,72 @@
                     var matchingID = data.comments[x].id;
                     commentID.push(matchingID);
                 }
-                //else { //this isn't working correctly
-                //  services.notify("there was an error matching the target string. Please notify the [developer](mailto:dpawluk@zendesk.com).", 'error');
-                //}
             }
 
             this.executeRedaction(commentID, escapedString);
         },
 
-        confirmAttachment: function(data) {
-            var selectedIds = this.$('ul#attachmentList li input').serializeArray();
-            var selectedAttachments = _.chain(selectedIds)
+        getSelectedAttachments: function() {
+            var inputData = this.$('ul#attachmentList li input').serializeArray();
+            var selected_attachments = _.chain(inputData)
+                .groupBy(function(data) {
+                    return data.name
+                })
+                .filter(function(data) {
+                    return data.length > 4;
+                })
                 .map(function(attachment) {
                     return {
-                        attachment_id: attachment.name
+                        selected: attachment[0].value,
+                        attachment_id: attachment[1].value,
+                        url: attachment[2].value,
+                        file: attachment[3].value,
+                        comment_id: attachment[4].value
                     }
                 })
                 .value();
-            var count = selectedIds.length;
-            var presentedHtml = '';
+            return selected_attachments;
+        },
+
+        confirmAttachment: function() {
+            var selected_attachments = this.getSelectedAttachments();
+            var attachList = '';
+            var count = selected_attachments.length;
             for (var x = 0; x < count; x++) {
+                attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+            }
+            var presentedAttachments = '<p>You will be permanently removing the below files:</p><ul class=\"redaction_img_list\">' + attachList + '</ul>';
+            this.$('.attach_redact').modal({
+                backdrop: true,
+                keyboard: false,
+                body: this.$('.modal-body div.attachPresenter').html(presentedAttachments)
+            });
+        },
+
+        doAttachRedact: function() {
+            this.$('.attach_redact').modal('hide');
+            var selected_attachments = this.getSelectedAttachments();
+            var count = selected_attachments.length;
+            var ticket_id = this.ticket().id();
+            for (var x = 0; x < count; x++) {
+                var c_id = selected_attachments[x].comment_id;
+                var a_id = selected_attachments[x].attachment_id;
+                this.ajax('putRedactionAttachment', ticket_id, c_id, a_id);
 
             }
-            console.log(selectedAttachments);
+
         },
+
 
         executeRedaction: function(commentID, escapedString) {
             var counted = _.size(commentID);
-            var ticketId = this.ticket().id();
+            var ticket_id = this.ticket().id();
             var data = {
                 "text": escapedString
             };
             for (var x = 0; x < counted; x++) {
                 var c_id = commentID[x];
-                this.ajax('putRedactionString', data, ticketId, c_id);
+                this.ajax('putRedactionString', data, ticket_id, c_id);
             }
         },
 
@@ -168,6 +223,8 @@
         notifyFail: function() {
             services.notify('One or more of the redactions failed. I guess there\'s more work to do yet...', 'error');
         }
+
+
     };
 
 }());
