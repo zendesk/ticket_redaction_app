@@ -1,20 +1,6 @@
 (function() {
 
     return {
-        undermatches: function(attrs) {
-            return function(obj) {
-                if (obj === attrs) return true; //avoid comparing an object to itself.
-                for (var key in attrs) {
-                    if (attrs[key] !== obj[key])
-                        return false;
-                }
-                return true;
-            }
-        },
-
-        underwhere: function(obj, attrs) {
-            return _.filter(obj, this.undermatches(attrs));
-        },
 
         resources: {
             REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
@@ -111,7 +97,7 @@
                                 type: attachment.content_type,
                                 url: attachment.content_url,
                                 file: attachment.file_name
-                            }
+                            };
                         })
                     };
                 })
@@ -156,7 +142,7 @@
             var inputData = this.$('ul#attachmentList li input').serializeArray();
             var selected_attachments = _.chain(inputData)
                 .groupBy(function(data) {
-                    return data.name
+                    return data.name;
                 })
                 .filter(function(data) {
                     return data.length > 4;
@@ -168,7 +154,7 @@
                         url: attachment[2].value,
                         file: attachment[3].value,
                         comment_id: attachment[4].value
-                    }
+                    };
                 })
                 .value();
             return selected_attachments;
