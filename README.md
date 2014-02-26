@@ -30,5 +30,5 @@ Pull requests are welcome.
 
 ## Screenshot(s):
 
-![](http://cl.ly/image/373Y2J34443s)
-![](http://cl.ly/image/3S2F2K3s1Q27)
+![](http://cl.ly/U7Wl/tra_01.png)
+![](http://cl.ly/U6ex/tra_02.png)
