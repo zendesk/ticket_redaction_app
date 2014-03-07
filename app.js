@@ -83,7 +83,6 @@
         //Will need to add logic to populate modal with attachments on this ticket...
         attachmentsTemplate: function(data) {
 
-
             var attachments = _.chain(data.comments)
                 .filter(function(comment) {
                     return comment.attachments.length > 0;
