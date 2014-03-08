@@ -1,8 +1,7 @@
 <section data-main>
   <div class="redactForm">
     <h4 class="redaction-type">Text Redaction</h4>
-    <textarea type="text" id="redactionString" class="redactionString" name="redactionString"  placeholder="please paste in the string you wish to redact..." rows="4" cols="50" >
-    </textarea>
+    <textarea type="text" id="redactionString" class="redactionString" name="redactionString"  placeholder="please paste in the string you wish to redact..." rows="4" cols="50" ></textarea>
     <button class='submitRedaction btn'>Redact This!</button>
   </div>
   <span class="breakline"></span>
