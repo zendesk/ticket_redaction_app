@@ -104,6 +104,9 @@
                     return comment.attachment_array;
                 })
                 .flatten(true)
+                .filter(function(attachment) {
+	                return attachment.file !== "redacted.txt";
+                })
                 .value();
             var count = attachments.length;
             for (var x = 0; x < count; x++) {
@@ -133,8 +136,14 @@
                     commentID.push(matchingID);
                 }
             }
+            if (commentID.length > 0) {
+	            this.executeRedaction(commentID, escapedString);
+            }
+            else {
+	            this.notifyNoMatch();
+            }
 
-            this.executeRedaction(commentID, escapedString);
+            
         },
 
         getSelectedAttachments: function() {
@@ -144,7 +153,7 @@
                     return data.name;
                 })
                 .filter(function(data) {
-                    return data.length > 4;
+                    return data.length > 5;
                 })
                 .map(function(attachment) {
                     return {
@@ -152,19 +161,28 @@
                         attachment_id: attachment[1].value,
                         url: attachment[2].value,
                         file: attachment[3].value,
-                        comment_id: attachment[4].value
+                        comment_id: attachment[4].value,
+                        file_type: attachment[5].value
                     };
                 })
                 .value();
             return selected_attachments;
+            
         },
 
         confirmAttachment: function() {
             var selected_attachments = this.getSelectedAttachments();
+            
             var attachList = '';
             var count = selected_attachments.length;
+            var generic_icon = this.assetURL('document_generic.png');
             for (var x = 0; x < count; x++) {
-                attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+            	if(selected_attachments[x].file_type.split("/")[0] == "image"){
+            	    attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                }
+                else {
+	                attachList += '<li><img src=\"' + generic_icon + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                }
             }
             var presentedAttachments = '<p>You will be permanently removing the below files:</p><ul class=\"redaction_img_list\">' + attachList + '</ul>';
             this.$('.attach_redact').modal({
@@ -207,6 +225,10 @@
 
         notifyFail: function() {
             services.notify('One or more of the redactions failed. I guess there\'s more work to do yet...', 'error');
+        },
+        
+        notifyNoMatch: function() {
+            services.notify('The entered string did not match any comments. Redactions are case-sensitive. Please double check and try again.', 'error');
         }
 
 

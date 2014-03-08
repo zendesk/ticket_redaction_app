@@ -63,20 +63,20 @@ float: right;
 
 .redaction_img_list li {
     height: 102px;
-    width: 75%;
-    border: 3px solid #888;
-    border-radius: 2px;
-    margin: 10px 0 5px 15px;
-    clear: left;
+    width: 90%;
+    border-bottom: 1px dotted rgba(123,123,123,1);
+    margin: 20px 0 5px 15px;
     position: relative;
+    padding-bottom: 15px;
 }
 
 .redaction_img_list span.modal_filename {
     text-align: right;
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    top: 5px;
+    right: 15px;
     font-size: 14px;
+    max-width: 50%;
 }
 
 
