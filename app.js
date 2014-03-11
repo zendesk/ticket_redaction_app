@@ -1,88 +1,72 @@
 (function() {
 
     return {
-
-        resources: {
-            REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
-            ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
-            TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
-        },
-
+        
+		resources: {
+			TEXT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
+			ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
+			TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
+		},
+		
         events: {
-            'app.activated': 'showEntryForm',
-            'click .submitRedaction': 'confirmString',
-            'click .attachRedact': 'getAttachmentArray',
-            'click .save_string_redact': 'doRedact',
-            'click .AttachLeave': 'showEntryForm',
+            'app.activated': 'redactMenu',
+            'click .AttachLeave': 'redactMenu',
+            'click .submit_text':'matchString',
+            'click .confirm_text_redaction':'performTextRedaction',
+            'click .attach_redact':'getRestComments',
+            'getAttachmentData.done':'attachMenu',
+            'getAttachmentData.fail':'notifyRestFail',
+            'doTextRedaction.done':'notifySuccess',
+            'doTextRedaction.fail':'notifyFail',
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'doAttachRedact',
-            'getTicketComments.done': 'matchResults',
-            'putRedactionString.done': 'notifyRedaction',
-            'putRedactionString.fail': 'notifyFail',
-            'getAttachmentData.done': 'attachmentsTemplate',
-            'putRedactionAttachment.done': 'notifyRedaction',
-            'putRedactionAttachment.fail': 'notifyFail'
-        }, //end events
-
-
+            'doAttachmentRedaction.done': 'notifySuccess',
+            'doAttachmentRedaction.fail': 'notifyFail'
+        },
+        
         requests: {
-            getTicketComments: function(ticketId) {
+			
+			doTextRedaction: function(data, ticket_id, comment_id) {
                 return {
-                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticketId),
-                    dataType: 'JSON',
-                    type: 'GET',
-                    contentType: 'application/json'
-                };
-            },
-            getAttachmentData: function(ticketId) {
-                return {
-                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticketId),
-                    dataType: 'JSON',
-                    type: 'GET',
-                    contentType: 'application/json'
-                };
-            },
-            putRedactionString: function(data, ticketId, c_id) {
-                return {
-                    url: helpers.fmt(this.resources.REDACTION_URI, ticketId, c_id),
+                    url: helpers.fmt(this.resources.TEXT_REDACTION_URI, ticket_id, comment_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
                     data: JSON.stringify(data) // '{"text": "value"}'
                 };
             },
-            putRedactionAttachment: function(ticketId, c_id, attachment_id) {
+            
+            doAttachmentRedaction: function(ticket_id, comment_id, attachment_id) {
                 return {
-                    url: helpers.fmt(this.resources.ATTACHMENT_REDACTION_URI, ticketId, c_id, attachment_id),
+                    url: helpers.fmt(this.resources.ATTACHMENT_REDACTION_URI, ticket_id, comment_id, attachment_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
                     data: '{"":""}'
                 };
+            },
+            
+            getAttachmentData: function(ticket_id) {
+                return {
+                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
+                    dataType: 'JSON',
+                    type: 'GET',
+                    contentType: 'application/json'
+                };
             }
-        }, //end requests
-
-        showEntryForm: function() {
-            this.switchTo('redaction_form');
+                        
         },
 
-        confirmString: function() {
-            var searchString = this.$('.redactionString')[0].value;
-            this.$('.text_redact').modal({
-                backdrop: true,
-                keyboard: false,
-                body: this.$('.modal-body div.stringPresenter').text(searchString)
-            });
+        redactMenu: function() {
+            this.switchTo('redact_text');
         },
-
-        getAttachmentArray: function() {
-            var ticketId = this.ticket().id();
-            this.ajax('getAttachmentData', ticketId);
+  
+        getRestComments: function() {
+            var ticket_id = this.ticket().id();
+            this.ajax('getAttachmentData', ticket_id);
         },
-
-        //Will need to add logic to populate modal with attachments on this ticket...
-        attachmentsTemplate: function(data) {
-
+        
+        attachMenu: function(data) {
             var attachments = _.chain(data.comments)
                 .filter(function(comment) {
                     return comment.attachments.length > 0;
@@ -112,41 +96,60 @@
             for (var x = 0; x < count; x++) {
                 attachments[x].key = x;
             }
-            this.switchTo('attachmentsForm', {
+            this.switchTo('redact_attach', {
                 attachments: attachments
             });
         },
-
-        doRedact: function() {
-            this.$('.text_redact').modal('hide');
-            var ticketId = this.ticket().id();
-            this.ajax('getTicketComments', ticketId);
+        
+        matchString: function() {
+        	var user_string = this.$('.redaction_string')[0].value;
+	    	var escaped_string = user_string.replace(/[\n]/g, "\\n");
+	    	var all_comments = this.ticket().comments();
+			var matched_comments = _.chain(all_comments)
+				.filter(function(comment) {
+					var string = comment.value();
+					return string.indexOf(escaped_string) > -1;
+				})
+				.value();
+			var total_actions = matched_comments.length;
+			if(user_string !== "") {
+				this.$('.text_redact').modal({
+	                backdrop: true,
+	                keyboard: false,
+	                body: this.$('.modal-body div.string_presenter').text(user_string),
+	                total_actions: this.$('.modal-body span.num_actions').text(total_actions)
+	            });
+	        }
+	        else {
+		        services.notify('Your redaction cannot be blank. Double check that you have pasted content into the text area.', 'error');
+	        }
         },
-
-        matchResults: function(data) {
-            var searchString = this.$('.redactionString')[0].value;
-            var escapedString = searchString.replace(/[\n]/g, "\\n");
-            var ticketComments = data.comments;
-            var count = data.count;
-            var commentID = [];
-            for (var x = 0; x < count; x++) {
-                var commentBody = data.comments[x].body;
-                if (commentBody.indexOf(escapedString) > -1) {
-                    var matchingID = data.comments[x].id;
-                    commentID.push(matchingID);
-                }
-            }
-            if (commentID.length > 0) {
-	            this.executeRedaction(commentID, escapedString);
-            }
-            else {
-	            this.notifyNoMatch();
-            }
-
-            
+        
+        performTextRedaction: function(e) {
+        	this.$('.text_redact').modal('hide');
+	        var user_string = this.$('.redaction_string')[0].value;
+	    	var escaped_string = user_string.replace(/[\n]/g, "\\n");
+	    	var all_comments = this.ticket().comments();
+			var matched_comments = _.chain(all_comments)
+				.filter(function(comment) {
+					var string = comment.value();
+					return string.indexOf(escaped_string) > -1;
+				})
+				.value();
+			var total_actions = matched_comments.length;
+			var ticket_id = this.ticket().id();
+			var data = {
+				"text" : escaped_string
+			};
+			for(var x = 0; x < total_actions; x++) {
+				var comment_id = matched_comments[x].id();
+				this.ajax('doTextRedaction', data, ticket_id, comment_id);
+			}	
+						
         },
+        
 
-        getSelectedAttachments: function() {
+getSelectedAttachments: function() {
             var inputData = this.$('ul#attachmentList li input').serializeArray();
             var selected_attachments = _.chain(inputData)
                 .groupBy(function(data) {
@@ -192,46 +195,32 @@
             });
         },
 
+
         doAttachRedact: function() {
             this.$('.attach_redact').modal('hide');
             var selected_attachments = this.getSelectedAttachments();
             var count = selected_attachments.length;
             var ticket_id = this.ticket().id();
             for (var x = 0; x < count; x++) {
-                var c_id = selected_attachments[x].comment_id;
-                var a_id = selected_attachments[x].attachment_id;
-                this.ajax('putRedactionAttachment', ticket_id, c_id, a_id);
+                var comment_id = selected_attachments[x].comment_id;
+                var attachment_id = selected_attachments[x].attachment_id;
+                this.ajax('doAttachmentRedaction', ticket_id, comment_id, attachment_id);
 
             }
 
-        },
-
-
-        executeRedaction: function(commentID, escapedString) {
-            var counted = _.size(commentID);
-            var ticket_id = this.ticket().id();
-            var data = {
-                "text": escapedString
-            };
-            for (var x = 0; x < counted; x++) {
-                var c_id = commentID[x];
-                this.ajax('putRedactionString', data, ticket_id, c_id);
-            }
-        },
-
-        notifyRedaction: function() {
-            services.notify('Your redactions were successful. Refresh the page to update this ticket view.');
-        },
-
-        notifyFail: function() {
-            services.notify('One or more of the redactions failed. I guess there\'s more work to do yet...', 'error');
         },
         
-        notifyNoMatch: function() {
-            services.notify('The entered string did not match any comments. Redactions are case-sensitive. Please double check and try again.', 'error');
-        }
-
-
+        notifySuccess: function(){
+	        services.notify('Your redactions were successful. Refresh the page to update this ticket view.');
+        },
+        
+        notifyFail: function() {
+	        services.notify('One or more of the redactions failed...please try again', 'error');
+        },
+        
+        notifyRestFail: function() {
+	        services.notify('There was a failure contacting the Zendesk REST API', 'error');
+        }         
     };
 
 }());
