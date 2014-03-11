@@ -1,32 +1,32 @@
 (function() {
 
     return {
-        
-		resources: {
-			TEXT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
-			ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
-			TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
-		},
-		
+
+        resources: {
+            TEXT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
+            ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
+            TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
+        },
+
         events: {
             'app.activated': 'redactMenu',
             'click .AttachLeave': 'redactMenu',
-            'click .submit_text':'matchString',
-            'click .confirm_text_redaction':'performTextRedaction',
-            'click .attach_redact':'getRestComments',
-            'getAttachmentData.done':'attachMenu',
-            'getAttachmentData.fail':'notifyRestFail',
-            'doTextRedaction.done':'notifySuccess',
-            'doTextRedaction.fail':'notifyFail',
+            'click .submit_text': 'matchString',
+            'click .confirm_text_redaction': 'performTextRedaction',
+            'click .attach_redact': 'getRestComments',
+            'getAttachmentData.done': 'attachMenu',
+            'getAttachmentData.fail': 'notifyRestFail',
+            'doTextRedaction.done': 'notifySuccess',
+            'doTextRedaction.fail': 'notifyFail',
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'doAttachRedact',
             'doAttachmentRedaction.done': 'notifySuccess',
             'doAttachmentRedaction.fail': 'notifyFail'
         },
-        
+
         requests: {
-			
-			doTextRedaction: function(data, ticket_id, comment_id) {
+
+            doTextRedaction: function(data, ticket_id, comment_id) {
                 return {
                     url: helpers.fmt(this.resources.TEXT_REDACTION_URI, ticket_id, comment_id),
                     dataType: 'JSON',
@@ -35,7 +35,7 @@
                     data: JSON.stringify(data) // '{"text": "value"}'
                 };
             },
-            
+
             doAttachmentRedaction: function(ticket_id, comment_id, attachment_id) {
                 return {
                     url: helpers.fmt(this.resources.ATTACHMENT_REDACTION_URI, ticket_id, comment_id, attachment_id),
@@ -45,7 +45,7 @@
                     data: '{"":""}'
                 };
             },
-            
+
             getAttachmentData: function(ticket_id) {
                 return {
                     url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
@@ -54,18 +54,18 @@
                     contentType: 'application/json'
                 };
             }
-                        
+
         },
 
         redactMenu: function() {
             this.switchTo('redact_text');
         },
-  
+
         getRestComments: function() {
             var ticket_id = this.ticket().id();
             this.ajax('getAttachmentData', ticket_id);
         },
-        
+
         attachMenu: function(data) {
             var attachments = _.chain(data.comments)
                 .filter(function(comment) {
@@ -89,7 +89,7 @@
                 })
                 .flatten(true)
                 .filter(function(attachment) {
-	                return attachment.file !== "redacted.txt";
+                    return attachment.file !== "redacted.txt";
                 })
                 .value();
             var count = attachments.length;
@@ -100,56 +100,55 @@
                 attachments: attachments
             });
         },
-        
-        matchString: function() {
-        	var user_string = this.$('.redaction_string')[0].value;
-	    	var escaped_string = user_string.replace(/[\n]/g, "\\n");
-	    	var all_comments = this.ticket().comments();
-			var matched_comments = _.chain(all_comments)
-				.filter(function(comment) {
-					var string = comment.value();
-					return string.indexOf(escaped_string) > -1;
-				})
-				.value();
-			var total_actions = matched_comments.length;
-			if(user_string !== "") {
-				this.$('.text_redact').modal({
-	                backdrop: true,
-	                keyboard: false,
-	                body: this.$('.modal-body div.string_presenter').text(user_string),
-	                total_actions: this.$('.modal-body span.num_actions').text(total_actions)
-	            });
-	        }
-	        else {
-		        services.notify('Your redaction cannot be blank. Double check that you have pasted content into the text area.', 'error');
-	        }
-        },
-        
-        performTextRedaction: function(e) {
-        	this.$('.text_redact').modal('hide');
-	        var user_string = this.$('.redaction_string')[0].value;
-	    	var escaped_string = user_string.replace(/[\n]/g, "\\n");
-	    	var all_comments = this.ticket().comments();
-			var matched_comments = _.chain(all_comments)
-				.filter(function(comment) {
-					var string = comment.value();
-					return string.indexOf(escaped_string) > -1;
-				})
-				.value();
-			var total_actions = matched_comments.length;
-			var ticket_id = this.ticket().id();
-			var data = {
-				"text" : escaped_string
-			};
-			for(var x = 0; x < total_actions; x++) {
-				var comment_id = matched_comments[x].id();
-				this.ajax('doTextRedaction', data, ticket_id, comment_id);
-			}	
-						
-        },
-        
 
-getSelectedAttachments: function() {
+        matchString: function() {
+            var user_string = this.$('.redaction_string')[0].value;
+            var escaped_string = user_string.replace(/[\n]/g, "\\n");
+            var all_comments = this.ticket().comments();
+            var matched_comments = _.chain(all_comments)
+                .filter(function(comment) {
+                    var string = comment.value();
+                    return string.indexOf(escaped_string) > -1;
+                })
+                .value();
+            var total_actions = matched_comments.length;
+            if (user_string !== "") {
+                this.$('.text_redact').modal({
+                    backdrop: true,
+                    keyboard: false,
+                    body: this.$('.modal-body div.string_presenter').text(user_string),
+                    total_actions: this.$('.modal-body span.num_actions').text(total_actions)
+                });
+            } else {
+                services.notify('Your redaction cannot be blank. Double check that you have pasted content into the text area.', 'error');
+            }
+        },
+
+        performTextRedaction: function(e) {
+            this.$('.text_redact').modal('hide');
+            var user_string = this.$('.redaction_string')[0].value;
+            var escaped_string = user_string.replace(/[\n]/g, "\\n");
+            var all_comments = this.ticket().comments();
+            var matched_comments = _.chain(all_comments)
+                .filter(function(comment) {
+                    var string = comment.value();
+                    return string.indexOf(escaped_string) > -1;
+                })
+                .value();
+            var total_actions = matched_comments.length;
+            var ticket_id = this.ticket().id();
+            var data = {
+                "text": escaped_string
+            };
+            for (var x = 0; x < total_actions; x++) {
+                var comment_id = matched_comments[x].id();
+                this.ajax('doTextRedaction', data, ticket_id, comment_id);
+            }
+
+        },
+
+
+        getSelectedAttachments: function() {
             var inputData = this.$('ul#attachmentList li input').serializeArray();
             var selected_attachments = _.chain(inputData)
                 .groupBy(function(data) {
@@ -170,21 +169,20 @@ getSelectedAttachments: function() {
                 })
                 .value();
             return selected_attachments;
-            
+
         },
 
         confirmAttachment: function() {
             var selected_attachments = this.getSelectedAttachments();
-            
+
             var attachList = '';
             var count = selected_attachments.length;
             var generic_icon = this.assetURL('document_generic.png');
             for (var x = 0; x < count; x++) {
-            	if(selected_attachments[x].file_type.split("/")[0] == "image"){
-            	    attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
-                }
-                else {
-	                attachList += '<li><img src=\"' + generic_icon + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                if (selected_attachments[x].file_type.split("/")[0] == "image") {
+                    attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                } else {
+                    attachList += '<li><img src=\"' + generic_icon + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
                 }
             }
             var presentedAttachments = '<p>You will be permanently removing the below files:</p><ul class=\"redaction_img_list\">' + attachList + '</ul>';
@@ -209,18 +207,18 @@ getSelectedAttachments: function() {
             }
 
         },
-        
-        notifySuccess: function(){
-	        services.notify('Your redactions were successful. Refresh the page to update this ticket view.');
+
+        notifySuccess: function() {
+            services.notify('Your redactions were successful. Refresh the page to update this ticket view.');
         },
-        
+
         notifyFail: function() {
-	        services.notify('One or more of the redactions failed...please try again', 'error');
+            services.notify('One or more of the redactions failed...please try again', 'error');
         },
-        
+
         notifyRestFail: function() {
-	        services.notify('There was a failure contacting the Zendesk REST API', 'error');
-        }         
+            services.notify('There was a failure contacting the Zendesk REST API', 'error');
+        }
     };
 
 }());
