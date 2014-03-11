@@ -9,7 +9,6 @@
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.url}}" />
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.file}}" />
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.comment_id}}" />
-        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.type}}" />
       </li>
       {{/each}}
     </ul>
