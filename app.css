@@ -1,20 +1,33 @@
-/***** Form Styles *****/
-button.submitRedaction {
-    margin: 20px 0 0 0;
+textarea#redaction_string {
+	text-indent: 0;
+	padding: 2px;
+	min-height: 150px;
+	margin-top: 15px;
 }
 
-label.redlabel {
-    margin: 0 0 10px 0;
+div.modal-body {
+	margin: 10px;
 }
 
-textarea.redactionString {
-    min-height: 100px;
+div.string_presenter {
+	min-height: 200px;
+	margin: 10px 0;
+	text-align: left;
+	text-decoration: underline;
+	padding-top: 15px;
+	border-top: 1px dotted #b2b2b2;
 }
+
 .modal{
   width: 700px;
 }
-.tinyNote {
-    font-size: 90%;
+
+span.tiny_note {
+	font-style: italic;
+}
+
+span.num_actions {
+	color: #e91010
 }
 
 span.breakline {
@@ -25,9 +38,24 @@ span.breakline {
     clear: both;
 }
 
-.redaction-type {
-    margin: 10px 0;
+button.submit_text {
+	margin: 2% 0 2% 65%;
 }
+
+button.attach_redact {
+	float: right;
+}
+
+label#attach_redact_label {
+	float: left;
+	font-size: 120%;
+	margin-top: 5px;
+}
+
+#attach_redact:after {
+    clear:both;
+}
+
 
 #attachLeave {
     float: left;
@@ -41,20 +69,6 @@ span.breakline {
     margin-left: 10px;
 }
 
-label#attachRedactLabel {
-float: left;
-font-size: 120%;
-margin-top: 5px;
-}
-
-#attachRedact {
-float: right;
-}
-
-#attachRedact:after {
-    clear:both;
-}
-
 .redaction_img_list li img {
     max-width: 50%;
     margin-right: 25px;
@@ -63,31 +77,21 @@ float: right;
 
 .redaction_img_list li {
     height: 102px;
-    width: 75%;
-    border: 3px solid #888;
-    border-radius: 2px;
-    margin: 10px 0 5px 15px;
-    clear: left;
+    width: 90%;
+    border-bottom: 1px dotted rgba(123,123,123,1);
+    margin: 20px 0 5px 15px;
     position: relative;
+    padding-bottom: 15px;
 }
 
 .redaction_img_list span.modal_filename {
     text-align: right;
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    top: 5px;
+    right: 15px;
     font-size: 14px;
+    max-width: 50%;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
