@@ -4,12 +4,12 @@
 
 ## Description:
 
-An app which uses the below endpoints (beta):
+An app which uses the below endpoints:
 
 * /api/v2/{{ticket_id}}/comments/{{comment_id}}/redact.json
 * /api/v2/{{ticket_id}}/comments/{{comment_id}}/attachments/{{attachment_id}}/redact.json
 
-The app is designed to create a simple and usable interface for Zendesk administrators to easily redact strings of text or attachments from a ticket. The intended use is to redact sensitive data, such as ID numbers, credit cards, passwords, etc... A user can copy/past the chosen text directly from a ticket into the app and it will confirm, then perform the redaction. Attachments are redacted by selecting from a list the desired attachments, then confirming the redaction in a modal window.
+The app is designed to create a simple and usable interface for Zendesk administrators to easily redact strings of text or attachments from a ticket. The intended use is to redact sensitive data, such as ID numbers, credit cards, passwords, etc... A user can copy/paste the chosen text directly from a ticket into the app and it will confirm, then perform the redaction. Attachments are redacted by selecting from a list the desired attachments, then confirming the redaction in a modal window.
 
 ## App location:
 
