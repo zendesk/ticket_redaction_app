@@ -106,6 +106,9 @@
             var escaped_string = user_string.replace(/[\n]/g, "\\n"); //	Unescape newlines so redacting the string represents the string in the comment, literally.
             var all_comments = this.ticket().comments();
             var matched_comments = _.chain(all_comments)
+                .filter(function(comment) {
+                    return comment.value() != null;
+                })
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
                     var string = comment.value();
                     return string.indexOf(escaped_string) > -1;
@@ -130,6 +133,9 @@
             var escaped_string = user_string.replace(/[\n]/g, "\\n");
             var all_comments = this.ticket().comments();
             var matched_comments = _.chain(all_comments)
+                .filter(function(comment) {
+                    return comment.value() != null;
+                })
                 .filter(function(comment) {
                     var string = comment.value();
                     return string.indexOf(escaped_string) > -1;
