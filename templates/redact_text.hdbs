@@ -20,8 +20,8 @@
       <h3 class="my_modal_label">Confirm Your Redaction</h3>
     </div>
     <div class="modal-body">
-      <p>Do you wish to redact the below string?</p>
-      <p> <span class="tiny_note">Note: This will remove the below string, which occurs <span class="num_actions">{{total_actions}}</span> times on this ticket</span></p>
+      <p>Do you wish to redact the below text?</p>
+      <p> <span class="tiny_note">Note: This will remove the below text, which occurs <span class="num_actions">{{total_actions}}</span> times on this ticket. This change is permanent and cannot be undone.</span></p>
       <div class="string_presenter">{{body}}</div>
     </div>
     <div class="modal-footer">
