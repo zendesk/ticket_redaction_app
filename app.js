@@ -11,11 +11,15 @@
         events: {
             'app.activated': 'redactMenu',
             'click .AttachLeave': 'redactMenu',
-            'click .submit_text': 'matchString',
-            'click .confirm_text_redaction': 'performTextRedaction',
+            'click .submit_text': 'getCommentsData',
+            'click .confirm_text_redaction': 'getCommentsDataRedact',
             'click .attach_redact': 'getRestComments',
             'getAttachmentData.done': 'attachMenu',
             'getAttachmentData.fail': 'notifyRestFail',
+            'getAllComments.done': 'matchString',
+            'getAllComments.fail': 'notifyRestFail',
+            'getConfirmedComments.done': 'performTextRedaction',
+            'getConfirmedComments.fail': 'notifyRestFail',
             'doTextRedaction.done': 'notifySuccess',
             'doTextRedaction.fail': 'notifyFail',
             'click .AttachConfirm': 'confirmAttachment',
@@ -47,6 +51,25 @@
             },
 
             getAttachmentData: function(ticket_id) { //	ZAF Data API does not have a getter for attachment id's so unfortunately this request is necessary
+                return {
+                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
+                    dataType: 'JSON',
+                    type: 'GET',
+                    contentType: 'application/json'
+                };
+            },
+
+            getAllComments: function(ticket_id) { // Looks like the "Awesome" ticket.comments() object isn't so awesome and now returns html body rather than text body
+                return {
+                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
+                    dataType: 'JSON',
+                    type: 'GET',
+                    contentType: 'application/json'
+                };
+
+            },
+
+            getConfirmedComments: function(ticket_id) { // quick and dirty to make use of REST API after refactor...
                 return {
                     url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
                     dataType: 'JSON',
@@ -101,16 +124,29 @@
             });
         },
 
-        matchString: function() { //	Uses Data API 'this.tickets().comments()' to retrieve comments, no worries inre: pagination as the result object isn't segmented.
+        getCommentsData: function() {
+            var ticket_id = this.ticket().id();
+            this.ajax('getAllComments', ticket_id);
+        },
+
+        getCommentsDataRedact: function() {
+            this.$('.text_redact').modal('hide');
+            var ticket_id = this.ticket().id();
+            this.ajax('getConfirmedComments', ticket_id);
+        },
+
+
+
+        matchString: function(data) { //	Uses Data API 'this.tickets().comments()' to retrieve comments, no worries inre: pagination as the result object isn't segmented.
             var user_string = this.$('.redaction_string')[0].value;
             var escaped_string = user_string.replace(/[\n]/g, "\\n"); //	Unescape newlines so redacting the string represents the string in the comment, literally.
-            var all_comments = this.ticket().comments();
+            var all_comments = data.comments;
             var matched_comments = _.chain(all_comments)
                 .filter(function(comment) {
-                    return comment.value() != null;
+                    return comment.body != null;
                 })
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
-                    var string = comment.value();
+                    var string = comment.body;
                     return string.indexOf(escaped_string) > -1;
                 })
                 .value();
@@ -127,28 +163,29 @@
             }
         },
 
-        performTextRedaction: function(e) { //	Fires when user confirms the string and number of redactions. 
-            this.$('.text_redact').modal('hide');
+        performTextRedaction: function(data) { //	Fires when user confirms the string and number of redactions. 
             var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/[\n]/g, "\\n");
-            var all_comments = this.ticket().comments();
+            var escaped_string = user_string.replace(/[\n]/g, "\\n"); //    Unescape newlines so redacting the string represents the string in the comment, literally.
+            var all_comments = data.comments;
             var matched_comments = _.chain(all_comments)
                 .filter(function(comment) {
-                    return comment.value() != null;
+                    return comment.body != null;
                 })
-                .filter(function(comment) {
-                    var string = comment.value();
+                .filter(function(comment) { //  Creates a new object only including comments that contain the user's desired string
+                    var string = comment.body;
                     return string.indexOf(escaped_string) > -1;
                 })
                 .value();
             var total_actions = matched_comments.length; //	This time, used to create the iterator for multiple redactions.
             var ticket_id = this.ticket().id();
-            var data = {
+            var text_data = {
                 "text": escaped_string
             };
+            console.log(matched_comments);
             for (var x = 0; x < total_actions; x++) {
-                var comment_id = matched_comments[x].id();
-                this.ajax('doTextRedaction', data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
+                var comment_id = matched_comments[x].id;
+                console.log(comment_id);
+                this.ajax('doTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
             }
 
         },
