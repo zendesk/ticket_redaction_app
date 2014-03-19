@@ -138,10 +138,8 @@
 
 
         matchString: function(data) { //	Uses Data API 'this.tickets().comments()' to retrieve comments, no worries inre: pagination as the result object isn't segmented.
-            user_string = this.$('.redaction_string')[0].value;
-            console.log(user_string);
+            var user_string = this.$('.redaction_string')[0].value;
             var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim(); //	Unescape newlines so redacting the string represents the string in the comment, literally.
-            console.log(escaped_string);
             var matched_comments = _.chain(data.comments)
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
                     var body_text = comment.body;
@@ -175,7 +173,6 @@
             var text_data = {
                 "text": escaped_string
             };
-            console.log(text_data);
             for (var x = 0; x < total_actions; x++) {
                 var comment_id = matched_comments[x].id;
                 this.ajax('doTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
