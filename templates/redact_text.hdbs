@@ -21,7 +21,7 @@
     </div>
     <div class="modal-body">
       <p>Do you wish to redact the below text?</p>
-      <p> <span class="tiny_note">Note: This will remove the below text, which occurs <span class="num_actions">{{total_actions}}</span> times on this ticket. This change is permanent and cannot be undone.</span></p>
+      <p> <span class="tiny_note">Note: This will remove the below text, which occurs in <span class="num_actions">{{total_actions}}</span> comments on this ticket. This change is permanent and cannot be undone.</span></p>
       <div class="string_presenter">{{body}}</div>
     </div>
     <div class="modal-footer">
