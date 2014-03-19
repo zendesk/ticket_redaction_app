@@ -138,16 +138,14 @@
 
 
         matchString: function(data) { //	Uses Data API 'this.tickets().comments()' to retrieve comments, no worries inre: pagination as the result object isn't segmented.
-            var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/[\n]/g, "\\n"); //	Unescape newlines so redacting the string represents the string in the comment, literally.
-            var all_comments = data.comments;
-            var matched_comments = _.chain(all_comments)
-                .filter(function(comment) {
-                    return comment.body != null;
-                })
+            user_string = this.$('.redaction_string')[0].value;
+            console.log(user_string);
+            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim(); //	Unescape newlines so redacting the string represents the string in the comment, literally.
+            console.log(escaped_string);
+            var matched_comments = _.chain(data.comments)
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
-                    var string = comment.body;
-                    return string.indexOf(escaped_string) > -1;
+                    var body_text = comment.body;
+                    return body_text.indexOf(escaped_string) > -1;
                 })
                 .value();
             var total_actions = matched_comments.length; // Used to display the total number of redaction actions in the confirmation modal.
@@ -165,15 +163,11 @@
 
         performTextRedaction: function(data) { //	Fires when user confirms the string and number of redactions. 
             var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/[\n]/g, "\\n"); //    Unescape newlines so redacting the string represents the string in the comment, literally.
-            var all_comments = data.comments;
-            var matched_comments = _.chain(all_comments)
-                .filter(function(comment) {
-                    return comment.body != null;
-                })
+            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").replace(/"/g, "\"").trim(); //   Unescape newlines so redacting the string represents the string in the comment, literally.
+            var matched_comments = _.chain(data.comments)
                 .filter(function(comment) { //  Creates a new object only including comments that contain the user's desired string
-                    var string = comment.body;
-                    return string.indexOf(escaped_string) > -1;
+                    var body_text = comment.body;
+                    return body_text.indexOf(escaped_string) > -1;
                 })
                 .value();
             var total_actions = matched_comments.length; //	This time, used to create the iterator for multiple redactions.
@@ -181,10 +175,9 @@
             var text_data = {
                 "text": escaped_string
             };
-            console.log(matched_comments);
+            console.log(text_data);
             for (var x = 0; x < total_actions; x++) {
                 var comment_id = matched_comments[x].id;
-                console.log(comment_id);
                 this.ajax('doTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
             }
 
