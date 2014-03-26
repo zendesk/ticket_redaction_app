@@ -2,37 +2,18 @@
 
     return {
 
-        resources: { //Static links accessed by requests using string interpolation (ember helper string.fmt)
-            TEXT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/redact.json',
-            ATTACHMENT_REDACTION_URI: '/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json',
-            TIXCOMMENTS_URI: '/api/v2/tickets/%@/comments.json'
-        },
-
-        events: {
-            'app.activated': 'redactMenu',
-            'click .AttachLeave': 'redactMenu',
-            'click .submit_text': 'getCommentsData',
-            'click .confirm_text_redaction': 'getCommentsDataRedact',
-            'click .attach_redact': 'getRestComments',
-            'getAttachmentData.done': 'attachMenu',
-            'getAttachmentData.fail': 'notifyRestFail',
-            'getAllComments.done': 'matchString',
-            'getAllComments.fail': 'notifyRestFail',
-            'getConfirmedComments.done': 'performTextRedaction',
-            'getConfirmedComments.fail': 'notifyRestFail',
-            'doTextRedaction.done': 'notifySuccess',
-            'doTextRedaction.fail': 'notifyFail',
-            'click .AttachConfirm': 'confirmAttachment',
-            'click .save_attach_redact': 'doAttachRedact',
-            'doAttachmentRedaction.done': 'notifySuccess',
-            'doAttachmentRedaction.fail': 'notifyFail'
-        },
+        comments: [],
 
         requests: {
-
-            doTextRedaction: function(data, ticket_id, comment_id) { //	REST API string redaction 
+            getComments: function(ticket_id, page) {
                 return {
-                    url: helpers.fmt(this.resources.TEXT_REDACTION_URI, ticket_id, comment_id),
+                    url: helpers.fmt('/api/v2/tickets/%@/comments.json?page=%@', ticket_id, page)
+                };
+            },
+
+            putTextRedaction: function(data, ticket_id, comment_id) {
+                return {
+                    url: helpers.fmt('/api/v2/tickets/%@/comments/%@/redact.json', ticket_id, comment_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
@@ -40,57 +21,99 @@
                 };
             },
 
-            doAttachmentRedaction: function(ticket_id, comment_id, attachment_id) { //	REST API attachment redaction
+            putAttachmentRedaction: function(ticket_id, comment_id, attachment_id) { //	REST API attachment redaction
                 return {
-                    url: helpers.fmt(this.resources.ATTACHMENT_REDACTION_URI, ticket_id, comment_id, attachment_id),
+                    url: helpers.fmt('/api/v2/tickets/%@/comments/%@/attachments/%@/redact.json', ticket_id, comment_id, attachment_id),
                     dataType: 'JSON',
                     type: 'PUT',
                     contentType: 'application/json',
                     data: '{"":""}'
                 };
-            },
-
-            getAttachmentData: function(ticket_id) { //	ZAF Data API does not have a getter for attachment id's so unfortunately this request is necessary
-                return {
-                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
-                    dataType: 'JSON',
-                    type: 'GET',
-                    contentType: 'application/json'
-                };
-            },
-
-            getAllComments: function(ticket_id) { // Looks like the "Awesome" ticket.comments() object isn't so awesome and now returns html body rather than text body
-                return {
-                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
-                    dataType: 'JSON',
-                    type: 'GET',
-                    contentType: 'application/json'
-                };
-
-            },
-
-            getConfirmedComments: function(ticket_id) { // quick and dirty to make use of REST API after refactor...
-                return {
-                    url: helpers.fmt(this.resources.TIXCOMMENTS_URI, ticket_id),
-                    dataType: 'JSON',
-                    type: 'GET',
-                    contentType: 'application/json'
-                };
             }
+        },
+
+        events: {
+            'app.activated': 'doSomething',
+            'click .submit_text': 'popText',
+            'click .confirm_text_redaction': 'makeTextRedaction',
+            'putTextRedaction.done': 'notifySuccess',
+            'putTextRedaction.fail': 'notifyFail',
+            'click .attach_redact': 'attachMenu',
+            'click .AttachConfirm': 'confirmAttachment',
+            'click .save_attach_redact': 'makeAttachmentRedaction',
+            'putAttachmentRedaction.done': 'notifySuccess',
+            'putAttachmentRedaction.fail': 'notifyFail'
 
         },
 
-        redactMenu: function() { //	initially displays the text redaction template.
-            this.switchTo('redact_text');
-        },
-
-        getRestComments: function() { //handler to get ticket comments - first step in creating attachment list - tickets with 100+ comments not supported yet. Needs pagination
+        doSomething: function() {
+            this.comments = {};
             var ticket_id = this.ticket().id();
-            this.ajax('getAttachmentData', ticket_id);
+            var fetchedComments = this._paginate({
+                request: 'getComments',
+                entity: 'comments',
+                id: ticket_id,
+                page: 1
+            });
+
+            fetchedComments
+                .done(_.bind(function(data) {
+                    this.comments = data;
+                }, this))
+                .fail(_.bind(function() {
+                    services.notify("Something went wrong and we couldn't reach the REST API to retrieve all comment data", 'error');
+                }, this));
+            this.switchTo('text_redact');
         },
 
-        attachMenu: function(data) { //	Maps comments.json to provide an array of attachments and necessary data to redact and/or display them
-            var attachments = _.chain(data.comments)
+        popText: function() {
+            var user_string = this.$('.redaction_string')[0].value;
+            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim();
+            var comment_data = this.comments;
+            var matched_comments = _.chain(comment_data)
+                .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
+                    var body_text = comment.body;
+                    return body_text.indexOf(escaped_string) > -1;
+                })
+                .value();
+            var total_actions = matched_comments.length;
+            if (user_string !== "") { //	If the string to be redacted isn't blank, then display the confirmation modal
+                this.$('.text_redact').modal({ //	Fires a modal to display the string that will be redacted and how many times it appears on the ticket.
+                    backdrop: true,
+                    keyboard: false,
+                    body: this.$('.modal-body div.string_presenter').text(user_string),
+                    total_actions: this.$('.modal-body span.num_actions').text(total_actions)
+                });
+            } else { //	If the form is submitted without any content, then let the customer know what they did.
+                services.notify('Your redaction cannot be blank. Double check that you have pasted content into the text area.', 'error');
+            }
+        },
+
+        makeTextRedaction: function() {
+            this.$('.text_redact').modal('hide');
+            var user_string = this.$('.redaction_string')[0].value;
+            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim();
+            var comment_data = this.comments;
+            var matched_comments = _.chain(comment_data)
+                .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
+                    var body_text = comment.body;
+                    return body_text.indexOf(escaped_string) > -1;
+                })
+                .value();
+            var total_actions = matched_comments.length;
+            var ticket_id = this.ticket().id();
+            var text_data = {
+                "text": escaped_string
+            };
+            for (var x = 0; x < total_actions; x++) {
+                var comment_id = matched_comments[x].id;
+                this.ajax('putTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
+            }
+        },
+
+        attachMenu: function() { //	Maps comments.json to provide an array of attachments and necessary data to redact and/or display them
+            var comment_data = this.comments;
+            var attachments = _.chain(comment_data)
                 .filter(function(comment) {
                     return comment.attachments.length > 0;
                 })
@@ -124,63 +147,6 @@
             });
         },
 
-        getCommentsData: function() {
-            var ticket_id = this.ticket().id();
-            this.ajax('getAllComments', ticket_id);
-        },
-
-        getCommentsDataRedact: function() {
-            this.$('.text_redact').modal('hide');
-            var ticket_id = this.ticket().id();
-            this.ajax('getConfirmedComments', ticket_id);
-        },
-
-
-
-        matchString: function(data) { //	Uses Data API 'this.tickets().comments()' to retrieve comments, no worries inre: pagination as the result object isn't segmented.
-            var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim(); //	Unescape newlines so redacting the string represents the string in the comment, literally.
-            var matched_comments = _.chain(data.comments)
-                .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
-                    var body_text = comment.body;
-                    return body_text.indexOf(escaped_string) > -1;
-                })
-                .value();
-            var total_actions = matched_comments.length; // Used to display the total number of redaction actions in the confirmation modal.
-            if (user_string !== "") { //	If the string to be redacted isn't blank, then display the confirmation modal
-                this.$('.text_redact').modal({ //	Fires a modal to display the string that will be redacted and how many times it appears on the ticket.
-                    backdrop: true,
-                    keyboard: false,
-                    body: this.$('.modal-body div.string_presenter').text(user_string),
-                    total_actions: this.$('.modal-body span.num_actions').text(total_actions)
-                });
-            } else { //	If the form is submitted without any content, then let the customer know what they did.
-                services.notify('Your redaction cannot be blank. Double check that you have pasted content into the text area.', 'error');
-            }
-        },
-
-        performTextRedaction: function(data) { //	Fires when user confirms the string and number of redactions. 
-            var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").replace(/"/g, "\"").trim(); //   Unescape newlines so redacting the string represents the string in the comment, literally.
-            var matched_comments = _.chain(data.comments)
-                .filter(function(comment) { //  Creates a new object only including comments that contain the user's desired string
-                    var body_text = comment.body;
-                    return body_text.indexOf(escaped_string) > -1;
-                })
-                .value();
-            var total_actions = matched_comments.length; //	This time, used to create the iterator for multiple redactions.
-            var ticket_id = this.ticket().id();
-            var text_data = {
-                "text": escaped_string
-            };
-            for (var x = 0; x < total_actions; x++) {
-                var comment_id = matched_comments[x].id;
-                this.ajax('doTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
-            }
-
-        },
-
-
         getSelectedAttachments: function() { //	Handler for grabbing the janky input from the attachment list template. Each attachment object has five hidden inputs that need to be grouped.
             var inputData = this.$('ul#attachmentList li input').serializeArray();
             var selected_attachments = _.chain(inputData)
@@ -202,7 +168,6 @@
                 })
                 .value();
             return selected_attachments;
-
         },
 
         confirmAttachment: function() { //	Fires off a modal to confirm the attachments selected for redaction. Image attachments will show thumbnails, generic icon for others
@@ -226,8 +191,7 @@
             });
         },
 
-
-        doAttachRedact: function() { //	Performs the attachment redaction if the user chose 'Yes' in the confirmation modal.
+        makeAttachmentRedaction: function() {
             this.$('.attach_redact').modal('hide');
             var selected_attachments = this.getSelectedAttachments();
             var count = selected_attachments.length;
@@ -235,10 +199,41 @@
             for (var x = 0; x < count; x++) {
                 var comment_id = selected_attachments[x].comment_id;
                 var attachment_id = selected_attachments[x].attachment_id;
-                this.ajax('doAttachmentRedaction', ticket_id, comment_id, attachment_id);
+                this.ajax('putAttachmentRedaction', ticket_id, comment_id, attachment_id);
 
             }
+        },
 
+        _paginate: function(a) {
+            var results = [];
+            var initialRequest = this.ajax(a.request, a.id, a.page);
+            // create and return a promise chain of requests to subsequent pages
+            var allPages = initialRequest.then(function(data) {
+                results.push(data[a.entity]);
+                var nextPages = [];
+                var pageCount = Math.ceil(data.count / 100);
+                for (; pageCount > 1; --pageCount) {
+                    nextPages.push(this.ajax(a.request, a.id, pageCount));
+                }
+                return this.when.apply(this, nextPages).then(function() {
+                    var entities = _.chain(arguments)
+                        .flatten()
+                        .filter(function(item) {
+                            return (_.isObject(item) && _.has(item, a.entity));
+                        })
+                        .map(function(item) {
+                            return item[a.entity];
+                        })
+                        .value();
+                    results.push(entities);
+                }).then(function() {
+                    return _.chain(results)
+                        .flatten()
+                        .compact()
+                        .value();
+                });
+            });
+            return allPages;
         },
 
         notifySuccess: function() { //	Cannot refresh ticket data from app, user must refresh page.
@@ -247,10 +242,6 @@
 
         notifyFail: function() { //	Whoops?
             services.notify('One or more of the redactions failed...please try again', 'error');
-        },
-
-        notifyRestFail: function() { //	REST API Whoops?
-            services.notify('There was a failure contacting the Zendesk REST API', 'error');
         }
     };
 
