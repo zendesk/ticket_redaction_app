@@ -47,7 +47,7 @@
         },
 
         doSomething: function() {
-            this.comments = {};
+            this.comments = [];
             var ticket_id = this.ticket().id();
             var fetchedComments = this._paginate({
                 request: 'getComments',
