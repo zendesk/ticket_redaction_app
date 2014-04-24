@@ -8,5 +8,5 @@
     "private": true,
     "location": "ticket_sidebar",
     "version": "1.1",
-    "frameworkVersion": "0.5"
+    "frameworkVersion": "1.0"
 }
