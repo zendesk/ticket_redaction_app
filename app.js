@@ -36,14 +36,9 @@
             'app.activated': 'doSomething',
             'click .submit_text': 'popText',
             'click .confirm_text_redaction': 'makeTextRedaction',
-            'putTextRedaction.done': 'notifySuccess',
-            'putTextRedaction.fail': 'notifyFail',
             'click .attach_redact': 'attachMenu',
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'makeAttachmentRedaction',
-            'putAttachmentRedaction.done': 'notifySuccess',
-            'putAttachmentRedaction.fail': 'notifyFail'
-
         },
 
         doSomething: function() {
@@ -102,13 +97,15 @@
                 .value();
             var total_actions = matched_comments.length;
             var ticket_id = this.ticket().id();
-            var text_data = {
-                "text": escaped_string
-            };
+            var text_data = { "text": escaped_string };
+            var requests = [];
+
             for (var x = 0; x < total_actions; x++) {
                 var comment_id = matched_comments[x].id;
-                this.ajax('putTextRedaction', text_data, ticket_id, comment_id); //	Fires the actual request to redact.json for text redactions
+                requests.push(this.ajax('putTextRedaction', text_data, ticket_id, comment_id)); //	Fires the actual request to redact.json for text redactions
             }
+
+            this._handleRequests(requests);
         },
 
         attachMenu: function() { //	Maps comments.json to provide an array of attachments and necessary data to redact and/or display them
@@ -196,12 +193,15 @@
             var selected_attachments = this.getSelectedAttachments();
             var count = selected_attachments.length;
             var ticket_id = this.ticket().id();
+            var requests = [];
+
             for (var x = 0; x < count; x++) {
                 var comment_id = selected_attachments[x].comment_id;
                 var attachment_id = selected_attachments[x].attachment_id;
-                this.ajax('putAttachmentRedaction', ticket_id, comment_id, attachment_id);
-
+                requests.push(this.ajax('putAttachmentRedaction', ticket_id, comment_id, attachment_id));
             }
+
+            this._handleRequests(requests);
         },
 
         _paginate: function(a) {
@@ -234,6 +234,15 @@
                 });
             });
             return allPages;
+        },
+
+        _handleRequests: function(requests) {
+          this.when.apply(this, requests).done(_.bind(function(){
+            this.notifySuccess();
+          }, this))
+          .fail(_.bind(function(){
+            this.notifyFail();
+          }, this));
         },
 
         notifySuccess: function() { //	Cannot refresh ticket data from app, user must refresh page.
