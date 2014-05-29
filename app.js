@@ -172,6 +172,13 @@
 
             var attachList = '';
             var count = selected_attachments.length;
+            if (count == 0){
+              this.$('.attach_noselection').modal({
+                backdrop: true,
+                keyboard: false
+              });
+              return false;
+            }
             var generic_icon = this.assetURL('document_generic.png');
             for (var x = 0; x < count; x++) {
                 if (selected_attachments[x].file_type.split("/")[0] == "image") { //	If the attachment is an image, show it.
