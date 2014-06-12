@@ -97,7 +97,9 @@
                 .value();
             var total_actions = matched_comments.length;
             var ticket_id = this.ticket().id();
-            var text_data = { "text": escaped_string };
+            var text_data = {
+                "text": escaped_string
+            };
             var requests = [];
 
             for (var x = 0; x < total_actions; x++) {
@@ -172,12 +174,12 @@
 
             var attachList = '';
             var count = selected_attachments.length;
-            if (count == 0){
-              this.$('.attach_noselection').modal({
-                backdrop: true,
-                keyboard: false
-              });
-              return false;
+            if (count === 0) {
+                this.$('.attach_noselection').modal({
+                    backdrop: true,
+                    keyboard: false
+                });
+                return false;
             }
             var generic_icon = this.assetURL('document_generic.png');
             for (var x = 0; x < count; x++) {
@@ -244,12 +246,12 @@
         },
 
         _handleRequests: function(requests) {
-          this.when.apply(this, requests).done(_.bind(function(){
-            this.notifySuccess();
-          }, this))
-          .fail(_.bind(function(){
-            this.notifyFail();
-          }, this));
+            this.when.apply(this, requests).done(_.bind(function() {
+                this.notifySuccess();
+            }, this))
+                .fail(_.bind(function() {
+                    this.notifyFail();
+                }, this));
         },
 
         notifySuccess: function() { //	Cannot refresh ticket data from app, user must refresh page.
