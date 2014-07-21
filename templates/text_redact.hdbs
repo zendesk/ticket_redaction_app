@@ -1,18 +1,13 @@
 <section data-main>
   <div class="redactForm">
     <h4 class="redaction-type">Text Redaction</h4>
-    <textarea placeholder="please paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"   rows="4" cols="50" ></textarea>
+    <textarea placeholder="please paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
     <button class='submit_text btn'>Redact This!</button>
   </div>
   <span class="breakline"></span>
   <label id="attach_redact_label" for="attach_redact" class="button-label" >Do you want to redact an attachment?</label>
   <button id="attach_redact" class="attach_redact btn" >Yes</button>
-  
-  
-  
-  
-  
-  
+
   <!--Modal for confirming text redactions -->
   <div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">

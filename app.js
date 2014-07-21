@@ -33,15 +33,18 @@
         },
 
         events: {
-            'app.activated': 'doSomething',
+            'app.activated': 'init',
             'click .submit_text': 'popText',
             'click .confirm_text_redaction': 'makeTextRedaction',
             'click .attach_redact': 'attachMenu',
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'makeAttachmentRedaction',
+            'click .AttachLeave': function(){
+              this.switchTo('text_redact');
+            }
         },
 
-        doSomething: function() {
+        init: function() {
             this.comments = [];
             var ticket_id = this.ticket().id();
             var fetchedComments = this._paginate({
@@ -248,6 +251,7 @@
         _handleRequests: function(requests) {
             this.when.apply(this, requests).done(_.bind(function() {
                 this.notifySuccess();
+                this.init();
             }, this))
                 .fail(_.bind(function() {
                     this.notifyFail();
