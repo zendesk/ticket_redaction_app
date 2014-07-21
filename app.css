@@ -3,6 +3,7 @@ textarea#redaction_string {
 	padding: 2px;
 	min-height: 150px;
 	margin-top: 15px;
+	width: 100%;
 }
 
 div.modal-body {
@@ -92,6 +93,3 @@ label#attach_redact_label {
     font-size: 14px;
     max-width: 50%;
 }
-
-
-
