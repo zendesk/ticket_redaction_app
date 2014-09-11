@@ -93,3 +93,9 @@ label#attach_redact_label {
     font-size: 14px;
     max-width: 50%;
 }
+.warn_unable {
+	display: inline-block;
+	padding-top: 20px;
+	font-size: 90%;
+	color: red;
+}
