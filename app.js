@@ -29,6 +29,12 @@
                     contentType: 'application/json',
                     data: '{"":""}'
                 };
+            },
+
+            getCustomRoles: function(){
+              return {
+                url: '/api/v2/custom_roles.json'
+              };
             }
         },
 
@@ -61,7 +67,21 @@
                 .fail(_.bind(function() {
                     services.notify("Something went wrong and we couldn't reach the REST API to retrieve all comment data", 'error');
                 }, this));
-            this.switchTo('text_redact');
+            var current_role_id = this.currentUser().role();
+            this.ajax('getCustomRoles')
+            .done(function(data){
+              var role_check = _.filter(data.custom_roles, function(role) {
+                return role.id === current_role_id;
+              });
+              var can_delete =  role_check[0].configuration.ticket_deletion;
+              this.switchTo('text_redact', {
+                can_delete: can_delete
+                });
+            })
+            .fail(function(){
+              this.notifyFail();
+            });
+
         },
 
         popText: function() {

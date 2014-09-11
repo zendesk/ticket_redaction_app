@@ -2,11 +2,17 @@
   <div class="redactForm">
     <h4 class="redaction-type">Text Redaction</h4>
     <textarea placeholder="please paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
+    {{#if can_delete}}
     <button class='submit_text btn'>Redact This!</button>
+    {{else}}
+    <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to enable this app</span>
+    {{/if}}
   </div>
+  {{#if can_delete}}
   <span class="breakline"></span>
   <label id="attach_redact_label" for="attach_redact" class="button-label" >Do you want to redact an attachment?</label>
   <button id="attach_redact" class="attach_redact btn" >Yes</button>
+  {{/if}}
 
   <!--Modal for confirming text redactions -->
   <div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
