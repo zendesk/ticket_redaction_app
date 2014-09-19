@@ -68,20 +68,26 @@
                     services.notify("Something went wrong and we couldn't reach the REST API to retrieve all comment data", 'error');
                 }, this));
             var current_role_id = this.currentUser().role();
-            this.ajax('getCustomRoles')
-            .done(function(data){
-              var role_check = _.filter(data.custom_roles, function(role) {
-                return role.id === current_role_id;
-              });
-              var can_delete =  role_check[0].configuration.ticket_deletion;
-              this.switchTo('text_redact', {
-                can_delete: can_delete
+            if(current_role_id === 'admin' || current_role_id === 'agent'){
+                this.switchTo('text_redact', {
+                    can_delete: true
                 });
-            })
-            .fail(function(){
-              this.notifyFail();
-            });
-
+            }
+            else {
+                this.ajax('getCustomRoles')
+                .done(function(data){
+                  var role_check = _.filter(data.custom_roles, function(role) {
+                    return role.id === current_role_id;
+                  });
+                  var can_delete =  role_check[0].configuration.ticket_deletion;
+                  this.switchTo('text_redact', {
+                    can_delete: can_delete
+                    });
+                })
+                .fail(function(){
+                  this.notifyFail();
+                });
+            }
         },
 
         popText: function() {
