@@ -1,7 +1,9 @@
 <section data-main>
   <div class="redactForm">
+  {{#if can_delete}}
     <h4 class="redaction-type">Text Redaction</h4>
     <textarea placeholder="please paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
+    {{/if}}
     {{#if can_delete}}
     <button class='submit_text btn'>Redact This!</button>
     {{else}}
