@@ -7,7 +7,7 @@
     {{#if can_delete}}
     <button class='submit_text btn'>Redact This!</button>
     {{else}}
-    <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to enable this app</span>
+    <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to allow 'ticket deletion' and enable this app</span>
     {{/if}}
   </div>
   {{#if can_delete}}
