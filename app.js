@@ -3,6 +3,7 @@
     return {
 
         comments: [],
+        userCanDelete: false,
 
         requests: {
             getComments: function(ticket_id, page) {
@@ -46,7 +47,9 @@
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'makeAttachmentRedaction',
             'click .AttachLeave': function(){
-              this.switchTo('text_redact');
+              this.switchTo('text_redact', {
+                can_delete: this.userCanDelete
+              });
             }
         },
 
@@ -69,8 +72,9 @@
                 }, this));
             var current_role_id = this.currentUser().role();
             if(current_role_id === 'admin' || current_role_id === 'agent'){
+                this.userCanDelete = true;
                 this.switchTo('text_redact', {
-                    can_delete: true
+                    can_delete: this.userCanDelete
                 });
             }
             else {
@@ -80,8 +84,9 @@
                     return role.id === current_role_id;
                   });
                   var can_delete =  role_check[0].configuration.ticket_deletion;
+                  this.userCanDelete = can_delete;
                   this.switchTo('text_redact', {
-                    can_delete: can_delete
+                    can_delete: this.userCanDelete
                     });
                 })
                 .fail(function(){
