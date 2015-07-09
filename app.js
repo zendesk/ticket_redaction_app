@@ -97,12 +97,11 @@
 
         popText: function() {
             var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim();
             var comment_data = this.comments;
             var matched_comments = _.chain(comment_data)
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
                     var body_text = comment.body;
-                    return body_text.indexOf(escaped_string) > -1;
+                    return body_text.indexOf(user_string) > -1;
                 })
                 .value();
             var total_actions = matched_comments.length;
@@ -121,18 +120,17 @@
         makeTextRedaction: function() {
             this.$('.text_redact').modal('hide');
             var user_string = this.$('.redaction_string')[0].value;
-            var escaped_string = user_string.replace(/\s*[\n]/g, "\n").trim();
             var comment_data = this.comments;
             var matched_comments = _.chain(comment_data)
                 .filter(function(comment) { //	Creates a new object only including comments that contain the user's desired string
                     var body_text = comment.body;
-                    return body_text.indexOf(escaped_string) > -1;
+                    return body_text.indexOf(user_string) > -1;
                 })
                 .value();
             var total_actions = matched_comments.length;
             var ticket_id = this.ticket().id();
             var text_data = {
-                "text": escaped_string
+                "text": user_string
             };
             var requests = [];
 
