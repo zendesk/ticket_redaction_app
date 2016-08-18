@@ -46,6 +46,7 @@
             'click .attach_redact': 'attachMenu',
             'click .AttachConfirm': 'confirmAttachment',
             'click .save_attach_redact': 'makeAttachmentRedaction',
+            'click .minimize' : 'minimizeApp',
             'click .AttachLeave': function(){
               this.switchTo('text_redact', {
                 can_delete: this.userCanDelete
@@ -243,6 +244,13 @@
             }
 
             this._handleRequests(requests);
+        },
+
+        minimizeApp: function() {
+             this.$('#contentWrapper').toggle();
+             this.$('#updown.open').html("&#xE760;");
+             this.$('#updown.closed').html("&#xE763;");
+             this.$('#updown').toggleClass('open closed');
         },
 
         _paginate: function(a) {
