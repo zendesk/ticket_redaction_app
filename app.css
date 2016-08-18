@@ -99,3 +99,20 @@ label#attach_redact_label {
 	font-size: 90%;
 	color: red;
 }
+.minimize {
+    float:right;
+    margin-right:3.5%;
+    float: right;
+    color: black;
+    margin: 7px;
+    font-size: 50px;
+    line-height: 15px;
+    cursor: pointer;
+    font-family: entypo;
+    display: inline-block;
+}
+
+
+button.minimize {
+    background-color: #FFF;
+}
