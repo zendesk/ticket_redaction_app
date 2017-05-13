@@ -1,6 +1,6 @@
 {
   "app": {
-    "description":  "Play the famous zen tunes in your help desk.",
-    "name":         "Buddha Machine"
+    "description":  "Redact text and attachments from your tickets.",
+    "name":         "Ticket Redaction"
   }
 }
