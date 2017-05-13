@@ -223,7 +223,7 @@
                 }
             }
             var presentedAttachments = '<p>You will be permanently removing the below files:</p><ul class=\"redaction_img_list\">' + attachList + '</ul>'; //	HTML to inject
-            this.$('.attach_redact').modal({ //	The above funciton and iteration is a bit dirty. Can be cleaned up using something like 'var html = this.renderTemplate()'
+            this.$('.attach_redact').modal({ //	The above function and iteration is a bit dirty. Can be cleaned up using something like 'var html = this.renderTemplate()'
                 backdrop: true,
                 keyboard: false,
                 body: this.$('.modal-body div.attachPresenter').html(presentedAttachments)
@@ -300,7 +300,7 @@
         },
 
         notifyFail: function() { //	Whoops?
-            services.notify('One or more of the redactions failed...please try again', 'error');
+            services.notify('One or more of the redactions failed… please try again', 'error');
         }
     };
 
