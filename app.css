@@ -1,7 +1,6 @@
 textarea#redaction_string {
 	text-indent: 0;
 	padding: 2px;
-	min-height: 150px;
 	margin-top: 15px;
 	width: 100%;
 }
@@ -40,11 +39,13 @@ span.breakline {
 }
 
 button.submit_text {
-	margin: 2% 0 2% 65%;
+	margin-top: 10px;
+	width: 100%;
 }
 
 button.attach_redact {
-	float: right;
+	margin-top: 10px;
+	width: 100%;
 }
 
 label#attach_redact_label {
