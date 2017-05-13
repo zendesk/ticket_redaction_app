@@ -1,7 +1,6 @@
 textarea#redaction_string {
 	text-indent: 0;
 	padding: 2px;
-	min-height: 150px;
 	margin-top: 15px;
 	width: 100%;
 }
