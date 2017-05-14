@@ -30,6 +30,8 @@ Pull requests are welcome.
 
 ## Screenshot(s):
 
-![](http://f.cl.ly/items/0m3F3Z3W331a2m093Q2K/redact1.png)
-![](http://cl.ly/image/1B0C231d1e2R/redact2.png)
-![](http://cl.ly/image/2A0D171n0m2f/redact3.png)
+![](https://cl.ly/2b2z0O0X130u/Screen%20Shot%202017-05-13%20at%207.00.40%20PM.png)
+![](https://cl.ly/3R0o261G0B25/Screen%20Shot%202017-05-14%20at%207.03.57%20AM.png)
+![](https://cl.ly/430l1C0S2D1M/Screen%20Shot%202017-05-14%20at%207.04.42%20AM.png)
+![](https://cl.ly/2q261t3U410H/Screen%20Shot%202017-05-14%20at%207.06.03%20AM.png)
+![](https://cl.ly/3E2k3k3M173X/Screen%20Shot%202017-05-14%20at%207.06.37%20AM.png)
