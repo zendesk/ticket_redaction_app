@@ -2,34 +2,34 @@
   <div class="redactForm">
   {{#if can_delete}}
     <h4 class="redaction-type">Text Redaction</h4>
-    <textarea placeholder="please paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
+    <textarea placeholder="Paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
     {{/if}}
     {{#if can_delete}}
-    <button class='submit_text btn'>Redact This!</button>
+    <button class='submit_text btn'>Redact Text</button>
     {{else}}
-    <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to allow 'ticket deletion' and enable this app</span>
+    <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to allow 'ticket deletion' and enable this app.</span>
     {{/if}}
   </div>
   {{#if can_delete}}
   <span class="breakline"></span>
-  <label id="attach_redact_label" for="attach_redact" class="button-label" >Do you want to redact an attachment?</label>
-  <button id="attach_redact" class="attach_redact btn" >Yes</button>
+  <h4 class="redaction-type">Attachment Redaction</h4>
+  <button id="attach_redact" class="attach_redact btn" >Select Attachment(s)</button>
   {{/if}}
 
   <!--Modal for confirming text redactions -->
   <div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 class="my_modal_label">Confirm Your Redaction</h3>
+      <h3 class="my_modal_label">Confirm Redaction</h3>
     </div>
     <div class="modal-body">
       <p>Do you wish to redact the below text?</p>
-      <p> <span class="tiny_note">Note: This will remove the below text, which occurs in <span class="num_actions">{{total_actions}}</span> comments on this ticket. This change is permanent and cannot be undone.</span></p>
+      <p><strong>Note:</strong> This text occurs in <span class="num_actions">{{total_actions}}</span> comments on this ticket. <strong>This change is permanent and cannot be undone.</strong></p>
       <div class="string_presenter">{{body}}</div>
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button class="btn btn-primary confirm_text_redaction" aria-hidden="true">Yes, Redact The Above Text</button>
+      <button class="btn btn-primary confirm_text_redaction" aria-hidden="true">Yes, redact the above text</button>
     </div>
   </div>
   <!--END text confirmation modal -->
