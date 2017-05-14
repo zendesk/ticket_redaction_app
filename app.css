@@ -1,8 +1,8 @@
 textarea#redaction_string {
 	text-indent: 0;
 	padding: 2px;
-	margin-top: 15px;
 	width: 100%;
+	height:1.5em;
 }
 
 div.modal-body {
@@ -39,12 +39,12 @@ span.breakline {
 }
 
 button.submit_text {
-	margin-top: 10px;
+	margin-top: 5px;
 	width: 100%;
 }
 
 button.attach_redact {
-	margin-top: 10px;
+	margin-top: 5px;
 	width: 100%;
 }
 
@@ -65,6 +65,10 @@ label#attach_redact_label {
 
 #attachConfirm {
     float: right;
+}
+
+#attachmentList {
+	margin-top:10px;
 }
 
 .filename {

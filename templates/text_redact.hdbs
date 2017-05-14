@@ -1,20 +1,16 @@
 <section data-main>
   <div class="redactForm">
   {{#if can_delete}}
-    <h4 class="redaction-type">Text Redaction</h4>
     <textarea placeholder="Paste a string of text you wish to redact..."  id="redaction_string" class="redaction_string" name="redaction_string"></textarea>
     {{/if}}
     {{#if can_delete}}
-    <button class='submit_text btn'>Redact Text</button>
+    <button class='submit_text c-btn c-btn--primary'>Redact text</button>
+    <button id="attach_redact" class="attach_redact c-btn c-btn--primary" >Select attachment(s) to redact</button>
     {{else}}
     <span class="warn_unable">Unfortunately your role does not have access to redaction. Your administrator can change your role to allow 'ticket deletion' and enable this app.</span>
     {{/if}}
   </div>
-  {{#if can_delete}}
-  <span class="breakline"></span>
-  <h4 class="redaction-type">Attachment Redaction</h4>
-  <button id="attach_redact" class="attach_redact btn" >Select Attachment(s)</button>
-  {{/if}}
+
 
   <!--Modal for confirming text redactions -->
   <div class="modal hide fade text_redact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
