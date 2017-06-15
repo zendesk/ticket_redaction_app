@@ -51,7 +51,8 @@
               this.switchTo('text_redact', {
                 can_delete: this.userCanDelete
               });
-            }
+            },
+            'click #get_support_button': 'showLabsDeflection'
         },
 
         init: function() {
@@ -301,6 +302,16 @@
 
         notifyFail: function() { //	Whoops?
             services.notify('One or more of the redactions failed...please try again', 'error');
+        },
+
+        showLabsDeflection: function(event){
+            event.preventDefault();
+            var help_link = helpers.fmt("%@/issues", this.author.email);
+            this.$('.labs_support').modal({ //   Fires a modal to display the string that will be redacted and how many times it appears on the ticket.
+                    backdrop: true,
+                    keyboard: false,
+                    button_data: this.$("#create_git_issue").attr("href", help_link)
+            });
         }
     };
 
