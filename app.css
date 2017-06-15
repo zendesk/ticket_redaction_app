@@ -1,3 +1,12 @@
+footer {
+    clear: both;
+    margin-top: 10px;
+}
+
+footer a {
+    float: right;
+}
+
 textarea#redaction_string {
 	text-indent: 0;
 	padding: 2px;
@@ -49,7 +58,7 @@ button.attach_redact {
 
 label#attach_redact_label {
 	float: left;
-	font-size: 120%;
+	font-size: 110%;
 	margin-top: 5px;
 }
 
