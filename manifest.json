@@ -2,7 +2,8 @@
     "name": "Ticket Redaction App",
     "author": {
         "name": "Zendesk Labs",
-        "email": "zendesklabs@zendesk.com"
+        "email": "https://github.com/zendesklabs/ticket_redaction_app",
+        "url": "https://github.com/zendesklabs/ticket_redaction_app"
     },
     "defaultLocale": "en",
     "private": false,

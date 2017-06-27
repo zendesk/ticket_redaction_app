@@ -6,3 +6,25 @@
 <div id="contentWrapper">
 <section data-main/>
 </div>
+
+<footer>
+<a href="" id="get_support_button">Get Support</a>
+</footer>
+
+
+<!--Modal for Zendesk Labs Support -->
+<div class="modal hide fade labs_support" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 class="my_modal_label">Get Support For This App</h3>
+  </div>
+  <div class="modal-body">
+    <p>This is a Zendesk Labs App. Zendesk Labs is a testing ground for experimental software applications that are in various stages of development. The software may change, break, or disappear at any time.</p>
+    <p>While Zendesk does not support Zendesk Labs Apps, their creators may be able to help. The best way to contact the original developer is by creating a GitHub Issue in the App's repository.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <a href="" target="_blank" class="btn btn-primary" id="create_git_issue" aria-hidden="true">View Issues</a>
+  </div>
+</div>
+<!--END text confirmation modal -->
