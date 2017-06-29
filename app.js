@@ -301,7 +301,8 @@
         },
 
         notifyFail: function() { //	Whoops?
-            services.notify('One or more of the redactions failed...please try again', 'error');
+
+          services.notify('One or more of the redactions failed... please try again', 'error');
         },
 
         showLabsDeflection: function(event){

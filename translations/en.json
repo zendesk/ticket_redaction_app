@@ -1,6 +1,6 @@
 {
   "app": {
     "description":  "An app for redacting portions of text/attachments from Zendesk Support tickets",
-    "name":         "Buddha Machine"
+    "name":         "Ticket Redaction"
   }
 }
