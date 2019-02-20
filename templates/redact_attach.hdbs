@@ -4,10 +4,10 @@
     <ul id="attachmentList">
       {{#each attachments}}
       <li>
-        <input class="attach_check" type="checkbox" name="{{this.key}}" /><span class="filename">{{this.file}}</span>
+        <input class="attach_check" type="checkbox" name="{{this.key}}" /><span class="filename">{{{this.file}}}</span>
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.attachment_id}}" />
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.url}}" />
-        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.file}}" />
+        <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{{this.file}}}" />
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.comment_id}}" />
         <input type="hidden" class="hidden_input" name="{{this.key}}" value="{{this.type}}" />
       </li>

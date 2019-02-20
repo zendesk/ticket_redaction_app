@@ -8,7 +8,7 @@
         requests: {
             getComments: function(ticket_id, page) {
                 return {
-                    url: helpers.fmt('/api/v2/tickets/%@/comments.json?page=%@', ticket_id, page)
+                    url: helpers.fmt('/api/v2/tickets/%@/comments.json?include_inline_images=true&page=%@', ticket_id, page)
                 };
             },
 
@@ -145,6 +145,7 @@
         },
 
         attachMenu: function() { //	Maps comments.json to provide an array of attachments and necessary data to redact and/or display them
+            var self = this;
             var comment_data = this.comments;
             var attachments = _.chain(comment_data)
                 .filter(function(comment) {
@@ -153,12 +154,13 @@
                 .map(function(comment) {
                     return {
                         attachment_array: _.map(comment.attachments, function(attachment) {
+                            var new_name = self.encodeHTML(attachment.file_name);
                             return {
                                 comment_id: comment.id,
                                 attachment_id: attachment.id,
                                 type: attachment.content_type,
                                 url: attachment.content_url,
-                                file: attachment.file_name
+                                file: new_name
                             };
                         })
                     };
@@ -218,9 +220,9 @@
             var generic_icon = this.assetURL('document_generic.png');
             for (var x = 0; x < count; x++) {
                 if (selected_attachments[x].file_type.split("/")[0] == "image") { //	If the attachment is an image, show it.
-                    attachList += '<li><img src=\"' + selected_attachments[x].url + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                    attachList += `<li><img src="${selected_attachments[x].url}" /> <span class="modal_filename">${selected_attachments[x].file}</span></li>`;
                 } else { //	If the attachment is anything other than an image, show a generic file icon
-                    attachList += '<li><img src=\"' + generic_icon + '\" /> <span class=\"modal_filename\">' + selected_attachments[x].file + '</span></li>';
+                    attachList += `<li><img src="${generic_icon}"/> <span class="modal_filename">${selected_attachments[x].file}</span></li>`;
                 }
             }
             var presentedAttachments = '<p>You will be permanently removing the below files:</p><ul class=\"redaction_img_list\">' + attachList + '</ul>'; //	HTML to inject
@@ -313,6 +315,10 @@
                     keyboard: false,
                     button_data: this.$("#create_git_issue").attr("href", help_link)
             });
+        },
+
+        encodeHTML: function(s) {
+          return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/=/g, '_');
         }
     };
 
