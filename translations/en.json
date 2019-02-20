@@ -1,6 +1,10 @@
 {
   "app": {
-    "description":  "An app for redacting portions of text/attachments from Zendesk Support tickets",
-    "name":         "Ticket Redaction"
+    "support":{
+      "short_description":  "An app for redacting portions of text/attachments from Zendesk Support tickets",
+      "installation_instructions": "1. Login to your Zendesk Support account. \n2. Click the cog icon in the sidebar, then select Apps > Marketplace. Scroll through the list of available Apps until you locate the Ticket Redaction app. \n3. Place your mouse cursor over the Ticket Redaction app then click Install. The app is now ready for use when viewing a ticket.\n\nNote: the app will be available to all agents in your account by default. If you want to restrict availability, you can use Role Restrictions to restrict the app based on the agent's role. Agents are also required to have the ability to delete tickets in order to use this app.",
+      "long_description": "* Permanently redact personal information from tickets \n* Bulk redaction and preview of ticket attachments \n* Easy to use copy/paste interface for redacting text\n\nThe app uses Zendesk’s Redaction API and provides a simple and usable interface for Zendesk Support agents and administrators to easily redact strings of text or attachments from a ticket. Now you can permanently redact sensitive data, such as ID numbers, credit cards, passwords, attachments, etc. from your tickets. Redaction events are noted in a ticket’s audit log so customers can be aware data has been deleted.\n\nNOTE: The Redaction API completely deletes data from Zendesk Support databases, but does not purge existing logs when the ticket data was originally created. Zendesk is investigating purging redacted data from logs in the future.",
+      "name": "Ticket Redaction"
+    }
   }
 }
