@@ -149,18 +149,17 @@
             var comment_data = this.comments;
             var attachments = _.chain(comment_data)
                 .filter(function(comment) {
-                    return comment.attachments.length > 0;
+                    return comment.attachments.length > -0;
                 })
                 .map(function(comment) {
                     return {
                         attachment_array: _.map(comment.attachments, function(attachment) {
-                            var new_name = self.encodeHTML(attachment.file_name);
                             return {
                                 comment_id: comment.id,
                                 attachment_id: attachment.id,
                                 type: attachment.content_type,
                                 url: attachment.content_url,
-                                file: new_name
+                                file: self.encodeHTML(attachment.file_name)
                             };
                         })
                     };
